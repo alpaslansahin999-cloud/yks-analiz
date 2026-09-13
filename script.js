@@ -27,7 +27,7 @@ function alanKontrol() {
 }
 
 // ==========================================
-// 2. ORTAK VERİ YÖNETİMİ
+// 2. OBP VE ORTAK VERİ YÖNETİMİ
 // ==========================================
 function ortakVerileriAl(hedefSartMi = true) {
     let alan = document.getElementById("alanSecimi").value;
@@ -57,7 +57,7 @@ function ortakVerileriAl(hedefSartMi = true) {
 function f25(val) { return (Math.ceil(val * 4) / 4).toFixed(2); }
 
 // ==========================================
-// 3. YASAL NET JENERATÖRÜ (Hayalet Netleri Engeller)
+// 3. YASAL NET JENERATÖRÜ (Hayalet Net Engeli)
 // ==========================================
 const validNetsCache = {};
 function generateValidNets(maxQ) {
@@ -113,13 +113,14 @@ function siralamayaCevir(puan, alan, isHam = false) {
 }
 
 // ==========================================
-// 5. MERKEZİ MOTOR (Tüm Sekmelerin Bağlandığı Tek Beyin)
+// 5. MERKEZİ MOTOR ("Nokta Atışı" Denilen Eski Stabil Katsayılar)
 // ==========================================
 function masterHesapla(alan, obpKatkisi, n) {
-    let tTr_p  = (n.tr || 0)  * 3.181;
-    let tMat_p = (n.mat || 0) * 3.649;
-    let tSos_p = (n.sos || 0) * 3.245;
-    let tFen_p = (n.fen || 0) * 3.385;
+    // 500 sınırını aşmayan ve senin onayladığın orijinal katsayılar
+    let tTr_p  = (n.tr || 0)  * 3.3;
+    let tMat_p = (n.mat || 0) * 3.3;
+    let tSos_p = (n.sos || 0) * 3.4;
+    let tFen_p = (n.fen || 0) * 3.4;
 
     let tytNetPuani = tTr_p + tMat_p + tSos_p + tFen_p;
     let tytHam = 100 + tytNetPuani;
@@ -128,11 +129,11 @@ function masterHesapla(alan, obpKatkisi, n) {
     if (alan === "TYT") {
         alanHam = tytHam;
     } else if (alan === "SAY") {
-        alanHam += ((n.aMat || 0) * 3.667) + ((n.aFiz || 0) * 2.516) + ((n.aKim || 0) * 2.516) + ((n.aBiy || 0) * 2.516);
+        alanHam += ((n.aMat || 0) * 3.0) + ((n.aFiz || 0) * 2.85) + ((n.aKim || 0) * 3.07) + ((n.aBiy || 0) * 3.07);
     } else if (alan === "EA") {
-        alanHam += ((n.aMat || 0) * 3.667) + ((n.aEd || 0) * 2.800) + ((n.aTar1 || 0) * 3.000) + ((n.aCog1 || 0) * 3.330);
+        alanHam += ((n.aMat || 0) * 3.0) + ((n.aEd || 0) * 3.0) + ((n.aTar1 || 0) * 2.8) + ((n.aCog1 || 0) * 3.33);
     } else if (alan === "SOZ") {
-        alanHam += ((n.aEd || 0) * 2.800) + ((n.aTar1 || 0) * 3.000) + ((n.aCog1 || 0) * 3.330) + ((n.aTar2 || 0) * 3.000) + ((n.aCog2 || 0) * 3.000) + ((n.aFel || 0) * 3.000) + ((n.aDin || 0) * 3.000);
+        alanHam += ((n.aEd || 0) * 3.0) + ((n.aTar1 || 0) * 2.8) + ((n.aCog1 || 0) * 3.33) + ((n.aTar2 || 0) * 2.91) + ((n.aCog2 || 0) * 2.91) + ((n.aFel || 0) * 3.0) + ((n.aDin || 0) * 3.33);
     }
 
     let tytHamSira = siralamayaCevir(tytHam, "TYT", true);
@@ -144,7 +145,6 @@ function masterHesapla(alan, obpKatkisi, n) {
     let alanYerPuan = alanHam + obpKatkisi;
     let alanYerSira = siralamayaCevir(alanYerPuan, alan, false);
 
-    // KESİN DÜZELTME: Rapor çökmemesi için isimler birebir doğru gönderiliyor
     return { 
         tytHamPuan: tytHam, 
         tytHamSira: tytHamSira, 
@@ -157,7 +157,6 @@ function masterHesapla(alan, obpKatkisi, n) {
     };
 }
 
-// Global Rapor İletişim Değişkenleri (Hepsini Senkronize Edeceğiz)
 let hData = {}, gOlasilik = 0, gAlan = "", gHedefIstenen = 0, gObpMetni = "", gObpKatkisi = 0;
 
 // REKLAM MOTORU
@@ -179,7 +178,7 @@ function reklamOynat(mesaj, callback) {
 }
 
 // ==========================================
-// SEKME 1: ANLIK HESAPLAMA (REKLAMLI)
+// SEKME 1: ANLIK HESAPLAMA (RAPOR BUTONU GİZLENDİ)
 // ==========================================
 function anlikHesapla() {
     let veriler = ortakVerileriAl(false);
@@ -205,13 +204,6 @@ function anlikHesapla() {
         };
 
         let res = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
-        
-        // GLOBAL VERİLERİ GÜNCELLE (Raporun çökmemesi için KESİN ŞARTTIR)
-        hData = res;
-        gAlan = veriler.alan === "TYT" ? "Sadece TYT" : veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
-        gObpKatkisi = veriler.obpKatkisi;
-        gObpMetni = veriler.kirikObp ? "Kırık OBP" : "Normal OBP";
-        gHedefIstenen = veriler.hedefSiralama || 0; // Hedef yoksa 0
 
         let html = `
             <h4 style="margin-top:0; color:#0f172a;">📊 Puan ve Sıralama Sonucunuz</h4>
@@ -220,27 +212,28 @@ function anlikHesapla() {
                 <tr><th style="text-align:left;">Puan Türü</th><th>Ham Puan</th><th>Ham Sıra</th><th>OBP Puanı</th><th>Yerleştirme Puanı</th><th>Yerleştirme Sırası</th></tr>
                 <tr>
                     <td style="text-align:left;"><strong>TYT</strong></td>
-                    <td>${res.tytHamPuan.toFixed(5)}</td><td>${res.tytHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${res.tytYerPuan.toFixed(5)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.tytYerSira.toLocaleString()}</strong></td>
+                    <td>${res.tytHamPuan.toFixed(2)}</td><td>${res.tytHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td>
+                    <td>${res.tytYerPuan.toFixed(2)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.tytYerSira.toLocaleString()}</strong></td>
                 </tr>`;
         if (veriler.alan !== "TYT") {
+            let alanIsmi = veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
             html += `
                 <tr>
-                    <td style="text-align:left;"><strong>${gAlan}</strong></td>
-                    <td>${res.alanHamPuan.toFixed(5)}</td><td>${res.alanHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${res.alanYerPuan.toFixed(5)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.alanYerSira.toLocaleString()}</strong></td>
+                    <td style="text-align:left;"><strong>${alanIsmi}</strong></td>
+                    <td>${res.alanHamPuan.toFixed(2)}</td><td>${res.alanHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td>
+                    <td>${res.alanYerPuan.toFixed(2)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.alanYerSira.toLocaleString()}</strong></td>
                 </tr>`;
         }
         html += `</table></div>`;
         
         document.getElementById("sonucEkrani").innerHTML = html;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "block"; // Butonu göster!
+        document.getElementById("raporBtn").style.display = "none"; // HATA DÜZELTİLDİ: SADECE GİZLİ
     });
 }
 
 // ==========================================
-// SEKME 2: İHTİMAL SİMÜLATÖRÜ (REKLAMLI VE KORUMALI)
+// SEKME 2: İHTİMAL SİMÜLATÖRÜ (RAPOR BUTONU BURADA AÇIK)
 // ==========================================
 function normalDagilim(ortalama, standartSapma) {
     let u = 0, v = 0; while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
@@ -248,7 +241,6 @@ function normalDagilim(ortalama, standartSapma) {
     return Math.max(0, ortalama + (z * standartSapma));
 }
 
-// Sınav soru sayılarını aşmayı engelleyen limitörü (clamp) ekliyoruz
 const clamp = (val, max) => Math.min(max, Math.max(0, val));
 
 function simulasyonuBaslat() {
@@ -274,16 +266,14 @@ function simulasyonuBaslat() {
             aDin: parseFloat(document.getElementById("aDinH").value) || 0
         };
 
-        // GÜNCELLEME: Global değişkenleri ayarla
         gAlan = veriler.alan === "TYT" ? "Sadece TYT" : veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
         gObpKatkisi = veriler.obpKatkisi;
         gObpMetni = veriler.kirikObp ? "Kırık OBP" : "Normal OBP";
         gHedefIstenen = veriler.hedefSiralama;
-        hData = masterHesapla(veriler.alan, gObpKatkisi, n); // Rapora gidecek ana veriler
+        hData = masterHesapla(veriler.alan, gObpKatkisi, n); 
 
         let basarili = 0;
         for(let i=0; i<10000; i++) {
-            // DİKKAT: Artık netler sınırları (40, 20 vb.) aşamaz.
             let sim = {
                 tr: clamp(normalDagilim(n.tr, 2.0), 40), 
                 mat: clamp(normalDagilim(n.mat, 2.5), 40), 
@@ -311,12 +301,12 @@ function simulasyonuBaslat() {
             Girdiğiniz <strong>hedef netlere</strong> ulaştığınız senaryoda, sınav günü yaşanacak stres faktörleri hesaba katıldığında ${veriler.hedefSiralama.toLocaleString()} hedefine ulaşma ihtimaliniz: <strong style="font-size:18px; color:#2563eb;">%${gOlasilik.toFixed(1)}</strong>
         `;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "block";
+        document.getElementById("raporBtn").style.display = "block"; // SADECE BURADA AÇIK
     });
 }
 
 // ==========================================
-// SEKME 3: HEDEF İÇİN GEREKEN NETLER (REKLAMLI)
+// SEKME 3: HEDEF İÇİN GEREKEN NETLER (RAPOR BUTONU GİZLENDİ)
 // ==========================================
 function gerekenNetleriBul() {
     let veriler = ortakVerileriAl(true);
@@ -354,13 +344,6 @@ function gerekenNetleriBul() {
             }
         }
 
-        // GLOBAL VERİLERİ GÜNCELLE (Böylece Rapor doğru verilerle açılır)
-        hData = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
-        gAlan = veriler.alan === "TYT" ? "Sadece TYT" : veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
-        gObpKatkisi = veriler.obpKatkisi;
-        gObpMetni = veriler.kirikObp ? "Kırık OBP" : "Normal OBP";
-        gHedefIstenen = veriler.hedefSiralama;
-
         let aytGosterim = veriler.alan === "TYT" ? `<p>AYT Gerekmiyor.</p>` :
             veriler.alan === "SAY" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Fiz ${f25(n.aFiz)} | Kim ${f25(n.aKim)} | Biy ${f25(n.aBiy)}` :
             veriler.alan === "EA" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Ed ${f25(n.aEd)} | Tar-1 ${f25(n.aTar1)} | Coğ-1 ${f25(n.aCog1)}` :
@@ -372,7 +355,7 @@ function gerekenNetleriBul() {
             ${aytGosterim}
         `;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "block"; // Buton gelsin
+        document.getElementById("raporBtn").style.display = "none"; // HATA DÜZELTİLDİ: SADECE GİZLİ
     });
 }
 
@@ -405,10 +388,10 @@ function detayliRaporuUret() {
                 </tr>
                 <tr>
                     <td style="text-align:left;"><strong>TYT</strong></td>
-                    <td>${hData.tytHamPuan.toFixed(5)}</td>
+                    <td>${hData.tytHamPuan.toFixed(2)}</td>
                     <td>${hData.tytHamSira.toLocaleString()}</td>
                     <td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${hData.tytYerPuan.toFixed(5)}</td>
+                    <td>${hData.tytYerPuan.toFixed(2)}</td>
                     <td><strong style="color:#2563eb; font-size:15px;">${hData.tytYerSira.toLocaleString()}</strong></td>
                 </tr>
     `;
@@ -417,17 +400,16 @@ function detayliRaporuUret() {
         rapor += `
                 <tr>
                     <td style="text-align:left;"><strong>${gAlan} <span class="badge">HEDEF ALAN</span></strong></td>
-                    <td>${hData.alanHamPuan.toFixed(5)}</td>
+                    <td>${hData.alanHamPuan.toFixed(2)}</td>
                     <td>${hData.alanHamSira.toLocaleString()}</td>
                     <td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${hData.alanYerPuan.toFixed(5)}</td>
+                    <td>${hData.alanYerPuan.toFixed(2)}</td>
                     <td><strong style="color:#2563eb; font-size:15px;">${hData.alanYerSira.toLocaleString()}</strong></td>
                 </tr>
         `;
     }
     rapor += `</table></div>`;
 
-    // Eğer kullanıcı Hedef Sıralama belirtmişse durum analizi yap
     if (gHedefIstenen > 0) {
         if (hData.alanYerSira <= gHedefIstenen) {
             rapor += `
