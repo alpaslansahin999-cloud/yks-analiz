@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Strateji Motoru PRO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>YKS Strateji Motoru PRO</h1>
+            <p>En Güncel YKS Veritabanıyla %100 İsabetli Simülasyon</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="sekmeDegistir('anlikSiralama')">Anlık Hesaplama</button>
+            <button class="tab-btn" onclick="sekmeDegistir('simulasyon')">İhtimal Simülatörü</button>
+            <button class="tab-btn" onclick="sekmeDegistir('hedefBulucu')">Gereken Netler</button>
+        </div>
+
+        <div class="card param-card">
+            <h3 class="card-title">⚙️ Sınav Parametreleri</h3>
+            <div class="param-grid">
+                <div class="input-group">
+                    <label>Puan Türü</label>
+                    <select id="alanSecimi" onchange="alanKontrol()">
+                        <option value="SAY">Sayısal (SAY)</option>
+                        <option value="EA">Eşit Ağırlık (EA)</option>
+                        <option value="SOZ">Sözel (SÖZ)</option>
+                        <option value="TYT">Sadece TYT</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Lise OBP (50-100)</label>
+                    <input type="number" id="obp" placeholder="Örn: 85" min="50" max="100">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="kirikObp">
+                        <label for="kirikObp">Kırık OBP</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Hedef Sıralama</label>
+                    <input type="number" id="hedefSiralama" placeholder="Örn: 50000" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Kalan Gün</label>
+                    <input type="number" id="kalanGun" placeholder="Örn: 120" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div id="anlikSiralamaSekmesi" class="tab-content active-content">
+            <div class="grid-2-col">
+                <div class="card">
+                    <h3 class="card-title">📘 TYT Netleriniz</h3>
+                    <table class="net-table">
+                        <tr><th>Ders</th><th>Netiniz</th></tr>
+                        <tr><td>Türkçe (40)</td><td><input type="number" id="pTr" step="0.25"></td></tr>
+                        <tr><td>Matematik (40)</td><td><input type="number" id="pMat" step="0.25"></td></tr>
+                        <tr><td>Sosyal (20)</td><td><input type="number" id="pSos" step="0.25"></td></tr>
+                        <tr><td>Fen (20)</td><td><input type="number" id="pFen" step="0.25"></td></tr>
+                    </table>
+                </div>
+                <div class="card" id="pAytKarti">
+                    <h3 class="card-title">📙 AYT Netleriniz</h3>
+                    <table class="net-table">
+                        <tr><th>Ders</th><th>Netiniz</th></tr>
+                        <tr><td>Matematik (40)</td><td><input type="number" id="pAMat" step="0.25"></td></tr>
+                        <tr><td>Fizik (14)</td><td><input type="number" id="pAFiz" step="0.25"></td></tr>
+                        <tr><td>Kimya (13)</td><td><input type="number" id="pAKim" step="0.25"></td></tr>
+                        <tr><td>Biyoloji (13)</td><td><input type="number" id="pABiy" step="0.25"></td></tr>
+                        <tr><td>Edebiyat (24)</td><td><input type="number" id="pAEd" step="0.25"></td></tr>
+                        <tr><td>Tarih-1 (10)</td><td><input type="number" id="pATar1" step="0.25"></td></tr>
+                        <tr><td>Coğrafya-1 (6)</td><td><input type="number" id="pACog1" step="0.25"></td></tr>
+                        <tr><td>Tarih-2 (11)</td><td><input type="number" id="pATar2" step="0.25"></td></tr>
+                        <tr><td>Coğrafya-2 (11)</td><td><input type="number" id="pACog2" step="0.25"></td></tr>
+                        <tr><td>Felsefe Gr. (12)</td><td><input type="number" id="pAFel" step="0.25"></td></tr>
+                        <tr><td>Din Kültürü (6)</td><td><input type="number" id="pADin" step="0.25"></td></tr>
+                    </table>
+                </div>
+            </div>
+            <button class="primary-btn" style="background-color:#8b5cf6;" onclick="anlikHesapla()">Hemen Hesapla</button>
+        </div>
+
+        <div id="simulasyonSekmesi" class="tab-content">
+            <div class="grid-2-col">
+                <div class="card">
+                    <h3 class="card-title">📘 TYT Gelişimi</h3>
+                    <table class="net-table">
+                        <tr><th>Ders</th><th>Mevcut</th><th>Hedef</th></tr>
+                        <tr><td>Türkçe (40)</td><td><input type="number" id="tTrM"></td><td><input type="number" id="tTrH"></td></tr>
+                        <tr><td>Matematik (40)</td><td><input type="number" id="tMatM"></td><td><input type="number" id="tMatH"></td></tr>
+                        <tr><td>Sosyal (20)</td><td><input type="number" id="tSosM"></td><td><input type="number" id="tSosH"></td></tr>
+                        <tr><td>Fen (20)</td><td><input type="number" id="tFenM"></td><td><input type="number" id="tFenH"></td></tr>
+                    </table>
+                </div>
+                <div class="card" id="aytKarti">
+                    <h3 class="card-title">📙 AYT Gelişimi</h3>
+                    <table class="net-table">
+                        <tr><th>Ders</th><th>Mevcut</th><th>Hedef</th></tr>
+                        <tr><td>Matematik (40)</td><td><input type="number" id="aMatM"></td><td><input type="number" id="aMatH"></td></tr>
+                        <tr><td>Fizik (14)</td><td><input type="number" id="aFizM"></td><td><input type="number" id="aFizH"></td></tr>
+                        <tr><td>Kimya (13)</td><td><input type="number" id="aKimM"></td><td><input type="number" id="aKimH"></td></tr>
+                        <tr><td>Biyoloji (13)</td><td><input type="number" id="aBiyM"></td><td><input type="number" id="aBiyH"></td></tr>
+                        <tr><td>Edebiyat (24)</td><td><input type="number" id="aEdM"></td><td><input type="number" id="aEdH"></td></tr>
+                        <tr><td>Tarih-1 (10)</td><td><input type="number" id="aTar1M"></td><td><input type="number" id="aTar1H"></td></tr>
+                        <tr><td>Coğrafya-1 (6)</td><td><input type="number" id="aCog1M"></td><td><input type="number" id="aCog1H"></td></tr>
+                        <tr><td>Tarih-2 (11)</td><td><input type="number" id="aTar2M"></td><td><input type="number" id="aTar2H"></td></tr>
+                        <tr><td>Coğrafya-2 (11)</td><td><input type="number" id="aCog2M"></td><td><input type="number" id="aCog2H"></td></tr>
+                        <tr><td>Felsefe Gr. (12)</td><td><input type="number" id="aFelM"></td><td><input type="number" id="aFelH"></td></tr>
+                        <tr><td>Din Kültürü (6)</td><td><input type="number" id="aDinM"></td><td><input type="number" id="aDinH"></td></tr>
+                    </table>
+                </div>
+            </div>
+            <button class="primary-btn" onclick="simulasyonuBaslat()">10.000 Senaryoda İhtimali Hesapla</button>
+        </div>
+
+        <div id="hedefBulucuSekmesi" class="tab-content">
+            <div class="card center-content">
+                <p style="color:#64748b; margin-bottom:20px;">Hedef Sıralamanıza ulaşmak için en güncel ÖSYM yığılma tablosuna göre yapmanız gereken rasyonel minimum net kombinasyonu hesaplanır.</p>
+                <button class="secondary-btn" onclick="gerekenNetleriBul()">Hedefim İçin Gereken Netleri Bul</button>
+            </div>
+        </div>
+
+        <div id="sonucEkrani" class="result-card" style="display:none;"></div>
+        
+        <button id="raporBtn" class="report-btn" style="display:none;" onclick="reklamIzle()">
+            🔒 Profesyonel Analiz Raporunu Aç (Reklam İzle)
+        </button>
+
+        <div id="reklamAlani" class="ad-loader" style="display:none;">
+            <div class="spinner"></div>
+            <p style="color:#64748b; font-size:14px; font-weight:600;">Premium Rapor Hazırlanıyor... (3 sn)</p>
+        </div>
+
+        <div id="detayliRapor" class="report-card" style="display:none;"></div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; color: #1e293b; margin: 0; padding: 20px; display: flex; justify-content: center; }
+.app-container { width: 100%; max-width: 950px; background: #f8fafc; padding: 30px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); box-sizing: border-box;}
+
+.header h1 { text-align: center; color: #0f172a; margin: 0 0 8px 0; font-size: 26px; font-weight: 800; }
+.header p { text-align: center; color: #64748b; margin-bottom: 30px; font-size: 14px; }
+
+/* Sekmeler */
+.tabs { display: flex; border-bottom: 2px solid #cbd5e1; margin-bottom: 25px; flex-wrap: wrap;}
+.tab-btn { flex: 1; min-width: 150px; padding: 15px; background: none; border: none; font-weight: 600; font-size: 14px; color: #94a3b8; cursor: pointer; transition: 0.3s; }
+.tab-btn:hover { color: #475569; }
+.tab-btn.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
+.tab-content { display: none; }
+.tab-content.active-content { display: block; }
+.tab-desc { text-align: center; color: #475569; font-size: 14px; margin-bottom: 20px; }
+
+/* Kartlar ve Izgaralar */
+.card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+.param-card { background: #f1f5f9; border-color: #94a3b8; }
+.card-title { margin: 0 0 15px 0; font-size: 16px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+.center-content { text-align: center; padding: 40px 20px; }
+
+/* 5 Sütunlu Esnek Grid */
+.param-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+/* Inputlar */
+.input-group label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+.input-group input, .input-group select { width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 13px; box-sizing: border-box; background: #ffffff; color: #0f172a; font-weight: 600; transition: 0.2s;}
+.input-group input:focus, .input-group select:focus { outline: none; border-color: #2563eb; }
+.checkbox-group { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+.checkbox-group label { margin: 0; font-size: 11px; cursor: pointer; color: #475569; font-weight: 600;}
+
+/* Net Tabloları */
+.net-table { width: 100%; border-collapse: collapse; }
+.net-table th { text-align: left; font-size: 13px; color: #475569; padding-bottom: 10px; }
+.net-table td { padding: 5px; font-size: 13px; font-weight: 600; color: #334155;}
+.net-table input { width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; text-align: center; font-size: 14px; font-weight: 600; box-sizing: border-box; background: #f8fafc;}
+.net-table input:focus { border-color: #2563eb; background: #ffffff; outline: none; }
+
+/* Butonlar */
+.primary-btn, .secondary-btn, .report-btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; color: white; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+.primary-btn { background-color: #2563eb; }
+.primary-btn:hover { background-color: #1d4ed8; }
+.secondary-btn { background-color: #059669; }
+.secondary-btn:hover { background-color: #047857; }
+.report-btn { background-color: #f59e0b; margin-top: 15px; }
+.report-btn:hover { background-color: #d97706; }
+
+/* Sonuç ve Gelişmiş Rapor Alanları */
+.result-card { background: #eff6ff; border: 2px solid #bfdbfe; border-left: 6px solid #3b82f6; border-radius: 8px; padding: 20px; font-size: 15px; line-height: 1.6; margin-bottom: 15px; color: #1e3a8a;}
+.report-card { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-top: 20px; overflow: hidden;}
+.report-header { background: #1e293b; color: white; padding: 20px; text-align: center;}
+.report-header h4 { margin: 0; font-size: 18px; }
+.report-body { padding: 25px; font-size: 14px; line-height: 1.6;}
+.report-table { width: 100%; border-collapse: collapse; margin: 15px 0; text-align: left; border: 1px solid #cbd5e1;}
+.report-table th, .report-table td { border-bottom: 1px solid #cbd5e1; padding: 12px; }
+.report-table th { background: #f1f5f9; font-size: 13px; color: #334155;}
+.status-box { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 500; }
+.status-success { background: #ecfdf5; border: 1px solid #34d399; color: #065f46; }
+.status-danger { background: #fef2f2; border: 1px solid #f87171; color: #991b1b; }
+.badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: #e2e8f0; color: #475569; margin-left: 5px; vertical-align: middle;}
+
+.ad-loader { text-align: center; margin: 20px 0; padding: 30px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; }
+.spinner { border: 4px solid #e2e8f0; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.disabled-card { opacity: 0.4; pointer-events: none; filter: grayscale(100%); }
+@media (max-width: 800px) { .grid-2-col { grid-template-columns: 1fr; } }
