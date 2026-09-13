@@ -50,6 +50,7 @@ function ortakVerileriAl(hedefSartMi = true) {
         alert("Hedef Sıralama ve Kalan Gün bilgileri simülasyon için zorunludur."); return null;
     }
     
+    // OBP'nin net getirisi: Diploma notu * 0.6
     let obpKatkisi = kirikObp ? (gercekObp * 0.3) : (gercekObp * 0.6);
     return { alan, obpKatkisi, hedefSiralama, kalanGun, kirikObp, gercekObp };
 }
@@ -82,19 +83,36 @@ function getNextValidNet(current, maxQ) {
 }
 
 // ==========================================
-// 4. KUSURSUZ 2024 YIĞILMA MATRİSİ 
+// 4. ÇİFT ÇIPALI 2024 YIĞILMA MATRİSİ 
+// Hem 7K (107 Net) hem de 107K (85 Net) referanslarına tam kilitlenmiştir.
 // ==========================================
 const yigilmaHam = {
-    "TYT": [ {p:500,s:1}, {p:480,s:2000}, {p:461.597,s:7447}, {p:440,s:20000}, {p:420,s:45000}, {p:400,s:80000}, {p:380,s:130000}, {p:360,s:200000}, {p:340,s:280000}, {p:320,s:380000}, {p:300,s:550000}, {p:250,s:1200000}, {p:200,s:2000000}, {p:0,s:3000000} ],
-    "SAY": [ {p:500,s:1}, {p:480,s:1000}, {p:460,s:4000}, {p:443.656,s:10083}, {p:420,s:22000}, {p:400,s:40000}, {p:380,s:65000}, {p:360,s:95000}, {p:340,s:135000}, {p:320,s:180000}, {p:300,s:230000}, {p:250,s:380000}, {p:200,s:650000}, {p:0,s:1500000} ],
-    "EA":  [ {p:500,s:1}, {p:460,s:1000}, {p:420,s:4000}, {p:400,s:8000}, {p:380,s:14000}, {p:355.565,s:22971}, {p:340,s:32000}, {p:320,s:50000}, {p:300,s:80000}, {p:280,s:130000}, {p:250,s:220000}, {p:200,s:500000}, {p:0,s:1200000} ],
+    "TYT": [ 
+        {p:500,s:1}, {p:480,s:2000}, {p:460.3,s:7300}, {p:440,s:20000}, {p:420,s:40000},
+        {p:400,s:62000}, {p:385.5,s:80300}, {p:370,s:105000}, {p:350,s:145000}, {p:330,s:210000}, 
+        {p:300,s:350000}, {p:250,s:1000000}, {p:200,s:1800000}, {p:0,s:3000000} 
+    ],
+    "SAY": [ 
+        {p:500,s:1}, {p:480,s:1000}, {p:460,s:4000}, {p:439.5,s:10083}, {p:420,s:20000},
+        {p:400,s:35000}, {p:380,s:60000}, {p:360,s:90000}, {p:340,s:125000}, {p:320,s:170000}, 
+        {p:300,s:220000}, {p:250,s:380000}, {p:200,s:650000}, {p:0,s:1500000} 
+    ],
+    "EA":  [ {p:500,s:1}, {p:460,s:1000}, {p:420,s:4000}, {p:400,s:8000}, {p:380,s:14000}, {p:340,s:32000}, {p:320,s:50000}, {p:300,s:80000}, {p:280,s:130000}, {p:250,s:220000}, {p:200,s:500000}, {p:0,s:1200000} ],
     "SOZ": [ {p:500,s:1}, {p:460,s:500}, {p:420,s:3000}, {p:400,s:8000}, {p:380,s:15000}, {p:360,s:25000}, {p:340,s:40000}, {p:320,s:60000}, {p:300,s:90000}, {p:280,s:140000}, {p:250,s:250000}, {p:200,s:500000}, {p:0,s:1000000} ]
 };
 
 const yigilmaYerlesme = {
-    "TYT": [ {p:560,s:1}, {p:540,s:2000}, {p:516.173,s:9177}, {p:500,s:15000}, {p:480,s:35000}, {p:450,s:85000}, {p:420,s:160000}, {p:400,s:230000}, {p:380,s:330000}, {p:360,s:450000}, {p:340,s:600000}, {p:320,s:800000}, {p:300,s:1050000}, {p:250,s:1800000}, {p:0,s:3000000} ],
-    "SAY": [ {p:560,s:1}, {p:540,s:1000}, {p:520,s:3500}, {p:498.232,s:11172}, {p:480,s:18000}, {p:450,s:40000}, {p:420,s:80000}, {p:390,s:130000}, {p:360,s:190000}, {p:330,s:260000}, {p:300,s:350000}, {p:250,s:600000}, {p:0,s:1500000} ],
-    "EA":  [ {p:560,s:1}, {p:520,s:1000}, {p:480,s:4000}, {p:450,s:8000}, {p:420,s:18000}, {p:410.141,s:24493}, {p:380,s:45000}, {p:350,s:85000}, {p:320,s:140000}, {p:290,s:220000}, {p:250,s:400000}, {p:0,s:1200000} ],
+    "TYT": [ 
+        {p:560,s:1}, {p:540,s:2000}, {p:514.8,s:9170}, {p:490,s:25000}, {p:470,s:45000},
+        {p:450,s:70000}, {p:424.5,s:107725}, {p:400,s:155000}, {p:380,s:220000}, {p:360,s:330000}, 
+        {p:340,s:480000}, {p:300,s:900000}, {p:250,s:1600000}, {p:0,s:3000000} 
+    ],
+    "SAY": [ 
+        {p:560,s:1}, {p:540,s:1000}, {p:520,s:3500}, {p:494.0,s:11172}, {p:470,s:22000},
+        {p:450,s:38000}, {p:420,s:75000}, {p:390,s:120000}, {p:360,s:180000}, {p:330,s:250000}, 
+        {p:300,s:340000}, {p:250,s:600000}, {p:0,s:1500000} 
+    ],
+    "EA":  [ {p:560,s:1}, {p:520,s:1000}, {p:480,s:4000}, {p:450,s:8000}, {p:420,s:18000}, {p:380,s:45000}, {p:350,s:85000}, {p:320,s:140000}, {p:290,s:220000}, {p:250,s:400000}, {p:0,s:1200000} ],
     "SOZ": [ {p:560,s:1}, {p:520,s:500}, {p:480,s:2000}, {p:450,s:6000}, {p:420,s:15000}, {p:400,s:25000}, {p:380,s:45000}, {p:360,s:70000}, {p:340,s:100000}, {p:320,s:140000}, {p:300,s:200000}, {p:250,s:400000}, {p:0,s:1000000} ]
 };
 
@@ -113,12 +131,11 @@ function siralamayaCevir(puan, alan, isHam = false) {
 }
 
 // ==========================================
-// 5. MERKEZİ MOTOR ("Nokta Atışı" Denilen Eski Stabil Katsayılar)
+// 5. MERKEZİ MOTOR 
 // ==========================================
 function masterHesapla(alan, obpKatkisi, n) {
-    // 500 sınırını aşmayan ve senin onayladığın orijinal katsayılar
     let tTr_p  = (n.tr || 0)  * 3.3;
-    let tMat_p = (n.mat || 0) * 3.3;
+    let tMat_p = (n.mat || 0) * 3.4;
     let tSos_p = (n.sos || 0) * 3.4;
     let tFen_p = (n.fen || 0) * 3.4;
 
@@ -178,7 +195,7 @@ function reklamOynat(mesaj, callback) {
 }
 
 // ==========================================
-// SEKME 1: ANLIK HESAPLAMA (RAPOR BUTONU GİZLENDİ)
+// SEKME 1: ANLIK HESAPLAMA (RAPOR BUTONU GİZLİ)
 // ==========================================
 function anlikHesapla() {
     let veriler = ortakVerileriAl(false);
@@ -209,7 +226,7 @@ function anlikHesapla() {
             <h4 style="margin-top:0; color:#0f172a;">📊 Puan ve Sıralama Sonucunuz</h4>
             <div style="overflow-x:auto;">
             <table class="report-table" style="margin-bottom:0; min-width:600px; text-align:center;">
-                <tr><th style="text-align:left;">Puan Türü</th><th>Ham Puan</th><th>Ham Sıra</th><th>OBP Puanı</th><th>Yerleştirme Puanı</th><th>Yerleştirme Sırası</th></tr>
+                <tr><th style="text-align:left;">Puan Türü</th><th>Tahmini Puan</th><th>Ham Sıra</th><th>OBP Puanı</th><th>Yerleştirme Puanı</th><th>Yerleştirme Sırası</th></tr>
                 <tr>
                     <td style="text-align:left;"><strong>TYT</strong></td>
                     <td>${res.tytHamPuan.toFixed(2)}</td><td>${res.tytHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td>
@@ -228,7 +245,7 @@ function anlikHesapla() {
         
         document.getElementById("sonucEkrani").innerHTML = html;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "none"; // HATA DÜZELTİLDİ: SADECE GİZLİ
+        document.getElementById("raporBtn").style.display = "none"; 
     });
 }
 
@@ -301,12 +318,12 @@ function simulasyonuBaslat() {
             Girdiğiniz <strong>hedef netlere</strong> ulaştığınız senaryoda, sınav günü yaşanacak stres faktörleri hesaba katıldığında ${veriler.hedefSiralama.toLocaleString()} hedefine ulaşma ihtimaliniz: <strong style="font-size:18px; color:#2563eb;">%${gOlasilik.toFixed(1)}</strong>
         `;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "block"; // SADECE BURADA AÇIK
+        document.getElementById("raporBtn").style.display = "block"; 
     });
 }
 
 // ==========================================
-// SEKME 3: HEDEF İÇİN GEREKEN NETLER (RAPOR BUTONU GİZLENDİ)
+// SEKME 3: HEDEF İÇİN GEREKEN NETLER (RAPOR BUTONU GİZLİ)
 // ==========================================
 function gerekenNetleriBul() {
     let veriler = ortakVerileriAl(true);
@@ -355,7 +372,7 @@ function gerekenNetleriBul() {
             ${aytGosterim}
         `;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "none"; // HATA DÜZELTİLDİ: SADECE GİZLİ
+        document.getElementById("raporBtn").style.display = "none"; 
     });
 }
 
@@ -380,7 +397,7 @@ function detayliRaporuUret() {
             <table class="report-table" style="min-width:600px; text-align:center;">
                 <tr>
                     <th style="text-align:left;">Kategori</th>
-                    <th>Ham Puan</th>
+                    <th>Tahmini Puan</th>
                     <th>Ham Sıra</th>
                     <th>OBP (${gObpMetni})</th>
                     <th>Yerleştirme Puanı</th>
