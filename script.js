@@ -1,26 +1,27 @@
 // ==========================================
-// 1. SEKME YÖNETİMİ VE ARAYÜZ
+// 1. SEKME YÖNETİMİ VE ARAYÜZ (DÜZELTİLDİ)
 // ==========================================
-function sekmeDegistir(sekmeId, event) {
+function sekmeDegistir(sekmeId, tiklananButon) {
+    // 1. Tüm butonların ve içeriklerin aktifliğini kaldır
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
     
-    // Tıklanan butonu aktif yap (event nesnesi varsa kullan, yoksa sekmeId ile butonu bul)
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-    } else {
-        // Eğer event gelmezse, data-target ile butonu bulup aktif yap
-        let activeBtn = document.querySelector(`.tab-btn[onclick*="${sekmeId}"]`);
-        if(activeBtn) activeBtn.classList.add('active');
+    // 2. Tıklanan butonu aktif et (HTML'den 'this' ile gönderilen obje)
+    if (tiklananButon) {
+        tiklananButon.classList.add('active');
     }
-
-    document.getElementById(sekmeId + 'Sekmesi').classList.add('active-content');
     
+    // 3. İlgili içeriği göster
+    let hedefSekme = document.getElementById(sekmeId + 'Sekmesi');
+    if (hedefSekme) {
+        hedefSekme.classList.add('active-content');
+    }
+    
+    // 4. Sonuç ekranlarını temizle
     document.getElementById("sonucEkrani").style.display = "none";
     document.getElementById("raporBtn").style.display = "none";
     document.getElementById("detayliRapor").style.display = "none";
 }
-
 
 function alanKontrol() {
     let alan = document.getElementById("alanSecimi").value;
@@ -155,14 +156,8 @@ function masterHesapla(alan, obpKatkisi, n) {
     let alanYerSira = siralamayaCevir(alanYerPuan, alan, false);
 
     return { 
-        tytHamPuan: tytHam, 
-        tytHamSira: tytHamSira, 
-        tytYerPuan: tytYerPuan, 
-        tytYerSira: tytYerSira, 
-        alanHamPuan: alanHam, 
-        alanHamSira: alanHamSira, 
-        alanYerPuan: alanYerPuan, 
-        alanYerSira: alanYerSira 
+        tytHamPuan: tytHam, tytHamSira: tytHamSira, tytYerPuan: tytYerPuan, tytYerSira: tytYerSira, 
+        alanHamPuan: alanHam, alanHamSira: alanHamSira, alanYerPuan: alanYerPuan, alanYerSira: alanYerSira 
     };
 }
 
@@ -170,29 +165,32 @@ let hData = {}, gOlasilik = 0, gAlan = "", gHedefIstenen = 0, gObpMetni = "", gO
 
 
 // ==========================================
-// ⭐ ADSTERRA REKLAM VE BEKLEME EKRANI ENTEGRASYONU ⭐
+// ⭐ ADSTERRA REKLAM SİSTEMİ (SORUNSUZ HALİ) ⭐
 // ==========================================
 function reklamOynat(mesaj, callback) {
+    // 1. Önceki sonuçları gizle
     document.getElementById("sonucEkrani").style.display = "none";
     document.getElementById("raporBtn").style.display = "none";
     document.getElementById("detayliRapor").style.display = "none";
     
-    // 1. Yeni sekmede Adsterra Reklamını (Direct Link) aç
+    // 2. Adsterra Linkini yeni sekmede aç (Para Kazandıran Kısım)
     window.open("https://www.profitableratecpmnetwork.com/p6sn97m6?key=78ad20d9a14e1cdc3312774076d4844e", "_blank");
 
-    // 2. Kendi ekranımızda (Zaten var olan reklamAlani div'inde) yükleniyor animasyonu ve sayacı göster
+    // 3. Reklam bekleme alanını (Zaten HTML'de var olan reklamAlani) göster
     let reklamDiv = document.getElementById("reklamAlani");
-    let kalanSaniye = 5; // Burayı istersen 10 saniye yapabilirsin
+    let kalanSaniye = 10; 
     
     reklamDiv.innerHTML = `
-        <div class="spinner"></div>
-        <p style="color:#64748b; font-size:15px; font-weight:600; margin-top:15px;">${mesaj}</p>
-        <p style="color:#e74c3c; font-size:14px; font-weight:bold; margin-top:10px;">Lütfen <span id="saniyeGosterge">${kalanSaniye}</span> saniye bekleyin...</p>
+        <div class="spinner" style="margin:20px auto;"></div>
+        <p style="color:#64748b; font-size:15px; font-weight:600; text-align:center;">${mesaj}</p>
+        <p style="color:#e74c3c; font-size:16px; font-weight:bold; text-align:center;">
+            Sonuçlar için <span id="saniyeGosterge">${kalanSaniye}</span> saniye bekleyiniz...
+        </p>
     `;
     reklamDiv.style.display = "block";
     reklamDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    // 3. Geri sayım işlemi
+    // 4. Geri sayım
     let geriSayim = setInterval(() => {
         kalanSaniye--;
         let gosterge = document.getElementById("saniyeGosterge");
@@ -201,9 +199,9 @@ function reklamOynat(mesaj, callback) {
         // Süre bitince
         if (kalanSaniye <= 0) {
             clearInterval(geriSayim);
-            reklamDiv.style.display = "none";
+            reklamDiv.style.display = "none"; // Reklam ekranını kapat
             
-            // Gerçek hesaplama (anlikHesapla vb.) fonksiyonunu çalıştır
+            // Asıl hesaplama (anlikHesapla vb.) fonksiyonunu çalıştır
             callback(); 
             document.getElementById("sonucEkrani").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -217,7 +215,7 @@ function anlikHesapla() {
     let veriler = ortakVerileriAl(false);
     if (!veriler) return;
 
-    reklamOynat("Sonuçlar Hesaplanıyor... (Sponsorlu Reklam)", () => {
+    reklamOynat("Sistem Yükleniyor... (Sponsorlu Bağlantıya Yönlendiriliyorsunuz)", () => {
         let n = {
             tr: parseFloat(document.getElementById("pTr").value) || 0, 
             mat: parseFloat(document.getElementById("pMat").value) || 0,
@@ -273,29 +271,21 @@ function normalDagilim(ortalama, standartSapma) {
     let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v); 
     return Math.max(0, ortalama + (z * standartSapma));
 }
-
 const clamp = (val, max) => Math.min(max, Math.max(0, val));
 
 function simulasyonuBaslat() {
     let veriler = ortakVerileriAl(true);
     if (!veriler) return;
     
-    reklamOynat("10.000 Simülasyon Senaryosu Analiz Ediliyor... (Sponsorlu Reklam)", () => {
+    reklamOynat("10.000 Simülasyon Senaryosu Analiz Ediliyor...", () => {
         let n = {
-            tr: parseFloat(document.getElementById("tTrH").value) || 0, 
-            mat: parseFloat(document.getElementById("tMatH").value) || 0,
-            sos: parseFloat(document.getElementById("tSosH").value) || 0, 
-            fen: parseFloat(document.getElementById("tFenH").value) || 0,
-            aMat: parseFloat(document.getElementById("aMatH").value) || 0, 
-            aFiz: parseFloat(document.getElementById("aFizH").value) || 0,
-            aKim: parseFloat(document.getElementById("aKimH").value) || 0, 
-            aBiy: parseFloat(document.getElementById("aBiyH").value) || 0,
-            aEd: parseFloat(document.getElementById("aEdH").value) || 0, 
-            aTar1: parseFloat(document.getElementById("aTar1H").value) || 0,
-            aCog1: parseFloat(document.getElementById("aCog1H").value) || 0, 
-            aTar2: parseFloat(document.getElementById("aTar2H").value) || 0,
-            aCog2: parseFloat(document.getElementById("aCog2H").value) || 0, 
-            aFel: parseFloat(document.getElementById("aFelH").value) || 0,
+            tr: parseFloat(document.getElementById("tTrH").value) || 0, mat: parseFloat(document.getElementById("tMatH").value) || 0,
+            sos: parseFloat(document.getElementById("tSosH").value) || 0, fen: parseFloat(document.getElementById("tFenH").value) || 0,
+            aMat: parseFloat(document.getElementById("aMatH").value) || 0, aFiz: parseFloat(document.getElementById("aFizH").value) || 0,
+            aKim: parseFloat(document.getElementById("aKimH").value) || 0, aBiy: parseFloat(document.getElementById("aBiyH").value) || 0,
+            aEd: parseFloat(document.getElementById("aEdH").value) || 0, aTar1: parseFloat(document.getElementById("aTar1H").value) || 0,
+            aCog1: parseFloat(document.getElementById("aCog1H").value) || 0, aTar2: parseFloat(document.getElementById("aTar2H").value) || 0,
+            aCog2: parseFloat(document.getElementById("aCog2H").value) || 0, aFel: parseFloat(document.getElementById("aFelH").value) || 0,
             aDin: parseFloat(document.getElementById("aDinH").value) || 0
         };
 
@@ -308,21 +298,10 @@ function simulasyonuBaslat() {
         let basarili = 0;
         for(let i=0; i<10000; i++) {
             let sim = {
-                tr: clamp(normalDagilim(n.tr, 2.0), 40), 
-                mat: clamp(normalDagilim(n.mat, 2.5), 40), 
-                sos: clamp(normalDagilim(n.sos, 1.5), 20), 
-                fen: clamp(normalDagilim(n.fen, 1.5), 20),
-                aMat: clamp(normalDagilim(n.aMat, 2.5), 40), 
-                aFiz: clamp(normalDagilim(n.aFiz, 1.5), 14), 
-                aKim: clamp(normalDagilim(n.aKim, 1.5), 13), 
-                aBiy: clamp(normalDagilim(n.aBiy, 1.5), 13),
-                aEd: clamp(normalDagilim(n.aEd, 2.0), 24), 
-                aTar1: clamp(normalDagilim(n.aTar1, 1.5), 10), 
-                aCog1: clamp(normalDagilim(n.aCog1, 1.0), 6),
-                aTar2: clamp(normalDagilim(n.aTar2, 1.5), 11), 
-                aCog2: clamp(normalDagilim(n.aCog2, 1.5), 11), 
-                aFel: clamp(normalDagilim(n.aFel, 1.5), 12), 
-                aDin: clamp(normalDagilim(n.aDin, 1.0), 6)
+                tr: clamp(normalDagilim(n.tr, 2.0), 40), mat: clamp(normalDagilim(n.mat, 2.5), 40), sos: clamp(normalDagilim(n.sos, 1.5), 20), fen: clamp(normalDagilim(n.fen, 1.5), 20),
+                aMat: clamp(normalDagilim(n.aMat, 2.5), 40), aFiz: clamp(normalDagilim(n.aFiz, 1.5), 14), aKim: clamp(normalDagilim(n.aKim, 1.5), 13), aBiy: clamp(normalDagilim(n.aBiy, 1.5), 13),
+                aEd: clamp(normalDagilim(n.aEd, 2.0), 24), aTar1: clamp(normalDagilim(n.aTar1, 1.5), 10), aCog1: clamp(normalDagilim(n.aCog1, 1.0), 6),
+                aTar2: clamp(normalDagilim(n.aTar2, 1.5), 11), aCog2: clamp(normalDagilim(n.aCog2, 1.5), 11), aFel: clamp(normalDagilim(n.aFel, 1.5), 12), aDin: clamp(normalDagilim(n.aDin, 1.0), 6)
             };
             let simRes = masterHesapla(veriler.alan, gObpKatkisi, sim);
             if (simRes.alanYerSira <= veriler.hedefSiralama) basarili++;
@@ -339,25 +318,20 @@ function simulasyonuBaslat() {
 }
 
 // ==========================================
-// SEKME 3: HEDEF İÇİN GEREKEN NETLER
+// SEKME 3: HEDEF İÇİN GEREKEN NETLER 
 // ==========================================
 function gerekenNetleriBul() {
     let veriler = ortakVerileriAl(true);
     if (!veriler) return;
     
-    reklamOynat("Yapay Zeka Hedefiniz İçin En Uygun Kombinasyonu Analiz Ediyor... (Reklam)", () => {
+    reklamOynat("Yapay Zeka Kombinasyonu Analiz Ediyor... (Reklam)", () => {
         let n = { tr:10, mat:5, sos:5, fen:2, aMat:5, aFiz:2, aKim:2, aBiy:2, aEd:5, aTar1:2, aCog1:2, aTar2:2, aCog2:2, aFel:2, aDin:2 };
         
         let hedefler = [];
-        if (veriler.alan === "TYT") {
-            hedefler = [{k:'tr', m:40}, {k:'mat', m:40}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'sos', m:20}, {k:'fen', m:20}];
-        } else if (veriler.alan === "SAY") {
-            hedefler = [{k:'aMat', m:40}, {k:'tr', m:40}, {k:'aMat', m:40}, {k:'mat', m:40}, {k:'aFiz', m:14}, {k:'aKim', m:13}, {k:'aBiy', m:13}, {k:'tr', m:40}, {k:'mat', m:40}];
-        } else if (veriler.alan === "EA") {
-            hedefler = [{k:'aMat', m:40}, {k:'aEd', m:24}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'aMat', m:40}, {k:'aTar1', m:10}, {k:'aCog1', m:6}];
-        } else if (veriler.alan === "SOZ") {
-            hedefler = [{k:'aEd', m:24}, {k:'tr', m:40}, {k:'aEd', m:24}, {k:'sos', m:20}, {k:'aTar1', m:10}, {k:'aCog1', m:6}, {k:'aTar2', m:11}, {k:'aCog2', m:11}, {k:'aFel', m:12}];
-        }
+        if (veriler.alan === "TYT") { hedefler = [{k:'tr', m:40}, {k:'mat', m:40}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'sos', m:20}, {k:'fen', m:20}]; } 
+        else if (veriler.alan === "SAY") { hedefler = [{k:'aMat', m:40}, {k:'tr', m:40}, {k:'aMat', m:40}, {k:'mat', m:40}, {k:'aFiz', m:14}, {k:'aKim', m:13}, {k:'aBiy', m:13}, {k:'tr', m:40}, {k:'mat', m:40}]; } 
+        else if (veriler.alan === "EA") { hedefler = [{k:'aMat', m:40}, {k:'aEd', m:24}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'aMat', m:40}, {k:'aTar1', m:10}, {k:'aCog1', m:6}]; } 
+        else if (veriler.alan === "SOZ") { hedefler = [{k:'aEd', m:24}, {k:'tr', m:40}, {k:'aEd', m:24}, {k:'sos', m:20}, {k:'aTar1', m:10}, {k:'aCog1', m:6}, {k:'aTar2', m:11}, {k:'aCog2', m:11}, {k:'aFel', m:12}]; }
 
         let sira = 3000000;
         let sayac = 0;
@@ -370,11 +344,7 @@ function gerekenNetleriBul() {
             let p = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
             sira = p.alanYerSira;
             sayac++;
-
-            if (sayac % hedefler.length === 0) {
-                if (oncekiSira === sira) break; 
-                oncekiSira = sira;
-            }
+            if (sayac % hedefler.length === 0) { if (oncekiSira === sira) break; oncekiSira = sira; }
         }
 
         let aytGosterim = veriler.alan === "TYT" ? `<p>AYT Gerekmiyor.</p>` :
@@ -393,16 +363,13 @@ function gerekenNetleriBul() {
 }
 
 // ==========================================
-// ŞEFFAF RAPOR EKRANI (REKLAMLI)
+// ŞEFFAF RAPOR EKRANI 
 // ==========================================
-function reklamIzle() {
-    reklamOynat("Premium Strateji Raporunuz Oluşturuluyor... (Sponsorlu Reklam)", () => {
-        detayliRaporuUret();
-    });
-}
-
 function detayliRaporuUret() {
     let rapor = `
         <div class="report-header">
             <h4>📋 YKS Strateji Raporu (OBP Dökümlü)</h4>
-            <span style="font-size
+            <span style="font-size:12px; font-weight:normal; opacity:0.8;">Gerçekçi Ham ve Yerleştirme Analizi (2024 Kalibreli)</span>
+        </div>
+        <div class="report-body">
+            <h5 style="margin-top:0; font-size:15px;">🔍 Hedef Netlerinizin Karşılığı
