@@ -1,16 +1,26 @@
 // ==========================================
 // 1. SEKME YÖNETİMİ VE ARAYÜZ
 // ==========================================
-function sekmeDegistir(sekmeId) {
+function sekmeDegistir(sekmeId, event) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
-    event.target.classList.add('active');
+    
+    // Tıklanan butonu aktif yap (event nesnesi varsa kullan, yoksa sekmeId ile butonu bul)
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    } else {
+        // Eğer event gelmezse, data-target ile butonu bulup aktif yap
+        let activeBtn = document.querySelector(`.tab-btn[onclick*="${sekmeId}"]`);
+        if(activeBtn) activeBtn.classList.add('active');
+    }
+
     document.getElementById(sekmeId + 'Sekmesi').classList.add('active-content');
     
     document.getElementById("sonucEkrani").style.display = "none";
     document.getElementById("raporBtn").style.display = "none";
     document.getElementById("detayliRapor").style.display = "none";
 }
+
 
 function alanKontrol() {
     let alan = document.getElementById("alanSecimi").value;
