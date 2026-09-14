@@ -1,25 +1,42 @@
 // ==========================================
-// 1. SEKME YÖNETİMİ VE ARAYÜZ (GÜVENLİ DÜZELTME)
+// 1. SEKME YÖNETİMİ VE ARAYÜZ (TAM KORUMALI)
 // ==========================================
 function sekmeDegistir(sekmeId) {
-    // Tüm butonların ve içeriklerin aktifliğini kaldır
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
-    
-    // HTML'de değişiklik yapmana gerek kalmadan tıklanan butonu bulur ve aktif eder
-    let aktifButon = document.querySelector(`button[onclick*="${sekmeId}"]`);
-    if (aktifButon) aktifButon.classList.add('active');
-    
-    // Hedef sekmeyi aç
-    let hedefSekme = document.getElementById(sekmeId + 'Sekmesi');
-    if (hedefSekme) hedefSekme.classList.add('active-content');
-    
-    // Eski sonuçları ve reklamı temizle
-    document.getElementById("sonucEkrani").style.display = "none";
-    document.getElementById("raporBtn").style.display = "none";
-    document.getElementById("detayliRapor").style.display = "none";
-    let reklamAlani = document.getElementById("reklamAlani");
-    if (reklamAlani) reklamAlani.style.display = "none";
+    try {
+        // 1. Aktiflikleri temizle
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
+        
+        // 2. Tıklanan butonu etiket fark etmeksizin bul ve aktif et
+        if (window.event && window.event.currentTarget) {
+            window.event.currentTarget.classList.add('active');
+        } else {
+            let aktifButon = document.querySelector(`[onclick*="${sekmeId}"]`);
+            if (aktifButon) aktifButon.classList.add('active');
+        }
+        
+        // 3. Hedef sekmeyi aç
+        let hedefSekme = document.getElementById(sekmeId + 'Sekmesi');
+        if (hedefSekme) {
+            hedefSekme.classList.add('active-content');
+        } else {
+            console.error("HTML'de şu sekme bulunamadı: " + sekmeId + "Sekmesi");
+        }
+        
+        // 4. Sayfa değiştiğinde sonuçları ve reklamı güvenlice temizle
+        let sonuc = document.getElementById("sonucEkrani");
+        let rapor = document.getElementById("raporBtn");
+        let detay = document.getElementById("detayliRapor");
+        let reklam = document.getElementById("reklamAlani");
+        
+        if (sonuc) sonuc.style.display = "none";
+        if (rapor) rapor.style.display = "none";
+        if (detay) detay.style.display = "none";
+        if (reklam) reklam.style.display = "none";
+        
+    } catch (hata) {
+        console.error("Sekme değiştirilirken bir hata oldu:", hata);
+    }
 }
 
 function alanKontrol() {
