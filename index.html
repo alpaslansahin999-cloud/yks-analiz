@@ -1,164 +1,331 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z8KPG9EPLP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-Z8KPG9EPLP');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YKS Strateji Motoru PRO</title>
-    <link rel="stylesheet" href="style.css">
+    <title>YKS Simülatörü & Strateji Analizi</title>
+    <style>
+        /* GENEL TASARIM (CSS) */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; color: #334155; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        h1, h2, h3, h4 { color: #0f172a; text-align: center; margin-top: 0; }
+        
+        /* ORTAK BİLGİLER ALANI */
+        .common-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #475569; }
+        .input-group input, .input-group select { padding: 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; }
+        
+        /* SEKMELER (TABS) */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 20px; background: #e2e8f0; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: #475569; transition: all 0.3s; flex: 1; min-width: 150px; }
+        .tab-btn.active { background: #2563eb; color: white; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
+        .tab-content { display: none; }
+        .active-content { display: block; }
+        
+        /* NET GİRİŞ ALANLARI */
+        .net-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fff; }
+        .net-card h4 { margin-bottom: 15px; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; }
+        .net-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; }
+        .net-grid input { width: 100%; box-sizing: border-box; padding: 8px; text-align: center; border: 1px solid #cbd5e1; border-radius: 5px; font-weight: bold; color: #0f172a; }
+        .disabled-card { opacity: 0.4; pointer-events: none; background: #f1f5f9; }
+        
+        /* BUTONLAR */
+        .action-btn { display: block; width: 100%; padding: 15px; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .action-btn:hover { background: #059669; }
+        
+        /* REKLAM VE SONUÇ EKRANI */
+        #reklamAlani { display: none; background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 40px 20px; margin-top: 20px; text-align: center; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #2563eb; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #sonucEkrani, #detayliRapor { display: none; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 20px; }
+        #raporBtn { display: none; background: #8b5cf6; margin-top: 15px; }
+        #raporBtn:hover { background: #7c3aed; }
+        
+        table.report-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        table.report-table th, table.report-table td { border: 1px solid #cbd5e1; padding: 10px; text-align: center; }
+        table.report-table th { background: #e2e8f0; color: #1e293b; }
+        
+        /* Mobil Uyum */
+        @media (max-width: 600px) { .net-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="header">
-            <h1>YKS Strateji Motoru PRO</h1>
-            <p>En Güncel YKS Veritabanıyla %100 İsabetli Simülasyon</p>
+<div class="container">
+    <h1>🚀 YKS Analiz Simülatörü</h1>
+    
+    <!-- ORTAK BİLGİLER -->
+    <div class="common-inputs">
+        <div class="input-group">
+            <label>Alanınız</label>
+            <select id="alanSecimi" onchange="alanKontrol()">
+                <option value="SAY">Sayısal</option>
+                <option value="EA">Eşit Ağırlık</option>
+                <option value="SOZ">Sözel</option>
+                <option value="TYT">Sadece TYT</option>
+            </select>
         </div>
-        
-        <div class="tabs">
-            <button class="tab-btn active" onclick="sekmeDegistir('anlik', event)">Anlık Hesapla</button>
-<button class="tab-btn" onclick="sekmeDegistir('simulasyon', event)">İhtimal Simülatörü</button>
-<button class="tab-btn" onclick="sekmeDegistir('gereken', event)">Hedef İçin Gereken</button>
-
+        <div class="input-group">
+            <label>Diploma Notu / OBP</label>
+            <input type="number" id="obp" placeholder="Örn: 85.5 veya 420" value="85">
         </div>
-
-        <div class="card param-card">
-            <h3 class="card-title">⚙️ Sınav Parametreleri</h3>
-            <div class="param-grid">
-                <div class="input-group">
-                    <label>Puan Türü</label>
-                    <select id="alanSecimi" onchange="alanKontrol()">
-                        <option value="SAY">Sayısal (SAY)</option>
-                        <option value="EA">Eşit Ağırlık (EA)</option>
-                        <option value="SOZ">Sözel (SÖZ)</option>
-                        <option value="TYT">Sadece TYT</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Lise OBP (50-100)</label>
-                    <input type="number" id="obp" placeholder="Örn: 85" min="50" max="100">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="kirikObp">
-                        <label for="kirikObp">Kırık OBP</label>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>Hedef Sıralama</label>
-                    <input type="number" id="hedefSiralama" placeholder="Örn: 50000" min="1">
-                </div>
-                <div class="input-group">
-                    <label>Kalan Gün</label>
-                    <input type="number" id="kalanGun" placeholder="Örn: 120" min="1">
-                </div>
-            </div>
+        <div class="input-group">
+            <label>Hedef Sıralama</label>
+            <input type="number" id="hedefSiralama" placeholder="Örn: 20000" value="50000">
         </div>
-
-        <div id="anlikSiralamaSekmesi" class="tab-content active-content">
-            <div class="grid-2-col">
-                <div class="card">
-                    <h3 class="card-title">📘 TYT Netleriniz</h3>
-                    <table class="net-table">
-                        <tr><th>Ders</th><th>Netiniz</th></tr>
-                        <tr><td>Türkçe (40)</td><td><input type="number" id="pTr" step="0.25"></td></tr>
-                        <tr><td>Matematik (40)</td><td><input type="number" id="pMat" step="0.25"></td></tr>
-                        <tr><td>Sosyal (20)</td><td><input type="number" id="pSos" step="0.25"></td></tr>
-                        <tr><td>Fen (20)</td><td><input type="number" id="pFen" step="0.25"></td></tr>
-                    </table>
-                </div>
-                <div class="card" id="pAytKarti">
-                    <h3 class="card-title">📙 AYT Netleriniz</h3>
-                    <table class="net-table">
-                        <tr><th>Ders</th><th>Netiniz</th></tr>
-                        <tr><td>Matematik (40)</td><td><input type="number" id="pAMat" step="0.25"></td></tr>
-                        <tr><td>Fizik (14)</td><td><input type="number" id="pAFiz" step="0.25"></td></tr>
-                        <tr><td>Kimya (13)</td><td><input type="number" id="pAKim" step="0.25"></td></tr>
-                        <tr><td>Biyoloji (13)</td><td><input type="number" id="pABiy" step="0.25"></td></tr>
-                        <tr><td>Edebiyat (24)</td><td><input type="number" id="pAEd" step="0.25"></td></tr>
-                        <tr><td>Tarih-1 (10)</td><td><input type="number" id="pATar1" step="0.25"></td></tr>
-                        <tr><td>Coğrafya-1 (6)</td><td><input type="number" id="pACog1" step="0.25"></td></tr>
-                        <tr><td>Tarih-2 (11)</td><td><input type="number" id="pATar2" step="0.25"></td></tr>
-                        <tr><td>Coğrafya-2 (11)</td><td><input type="number" id="pACog2" step="0.25"></td></tr>
-                        <tr><td>Felsefe Gr. (12)</td><td><input type="number" id="pAFel" step="0.25"></td></tr>
-                        <tr><td>Din Kültürü (6)</td><td><input type="number" id="pADin" step="0.25"></td></tr>
-                    </table>
-                </div>
-            </div>
-            <button class="primary-btn" style="background-color:#8b5cf6;" onclick="anlikHesapla()">Hemen Hesapla</button>
+        <div class="input-group">
+            <label>Kalan Gün</label>
+            <input type="number" id="kalanGun" placeholder="Örn: 150" value="150">
         </div>
-
-        <div id="simulasyonSekmesi" class="tab-content">
-            <div class="grid-2-col">
-                <div class="card">
-                    <h3 class="card-title">📘 TYT Gelişimi</h3>
-                    <table class="net-table">
-                        <tr><th>Ders</th><th>Mevcut</th><th>Hedef</th></tr>
-                        <tr><td>Türkçe (40)</td><td><input type="number" id="tTrM"></td><td><input type="number" id="tTrH"></td></tr>
-                        <tr><td>Matematik (40)</td><td><input type="number" id="tMatM"></td><td><input type="number" id="tMatH"></td></tr>
-                        <tr><td>Sosyal (20)</td><td><input type="number" id="tSosM"></td><td><input type="number" id="tSosH"></td></tr>
-                        <tr><td>Fen (20)</td><td><input type="number" id="tFenM"></td><td><input type="number" id="tFenH"></td></tr>
-                    </table>
-                </div>
-                <div class="card" id="aytKarti">
-                    <h3 class="card-title">📙 AYT Gelişimi</h3>
-                    <table class="net-table">
-                        <tr><th>Ders</th><th>Mevcut</th><th>Hedef</th></tr>
-                        <tr><td>Matematik (40)</td><td><input type="number" id="aMatM"></td><td><input type="number" id="aMatH"></td></tr>
-                        <tr><td>Fizik (14)</td><td><input type="number" id="aFizM"></td><td><input type="number" id="aFizH"></td></tr>
-                        <tr><td>Kimya (13)</td><td><input type="number" id="aKimM"></td><td><input type="number" id="aKimH"></td></tr>
-                        <tr><td>Biyoloji (13)</td><td><input type="number" id="aBiyM"></td><td><input type="number" id="aBiyH"></td></tr>
-                        <tr><td>Edebiyat (24)</td><td><input type="number" id="aEdM"></td><td><input type="number" id="aEdH"></td></tr>
-                        <tr><td>Tarih-1 (10)</td><td><input type="number" id="aTar1M"></td><td><input type="number" id="aTar1H"></td></tr>
-                        <tr><td>Coğrafya-1 (6)</td><td><input type="number" id="aCog1M"></td><td><input type="number" id="aCog1H"></td></tr>
-                        <tr><td>Tarih-2 (11)</td><td><input type="number" id="aTar2M"></td><td><input type="number" id="aTar2H"></td></tr>
-                        <tr><td>Coğrafya-2 (11)</td><td><input type="number" id="aCog2M"></td><td><input type="number" id="aCog2H"></td></tr>
-                        <tr><td>Felsefe Gr. (12)</td><td><input type="number" id="aFelM"></td><td><input type="number" id="aFelH"></td></tr>
-                        <tr><td>Din Kültürü (6)</td><td><input type="number" id="aDinM"></td><td><input type="number" id="aDinH"></td></tr>
-                    </table>
-                </div>
-            </div>
-            <button class="primary-btn" onclick="simulasyonuBaslat()">10.000 Senaryoda İhtimali Hesapla</button>
+        <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px; margin-top: 10px;">
+            <input type="checkbox" id="kirikObp" style="width: 20px; height: 20px;">
+            <label style="margin: 0; cursor: pointer;" for="kirikObp">OBP Kırık</label>
         </div>
-
-        <div id="hedefBulucuSekmesi" class="tab-content">
-            <div class="card center-content">
-                <p style="color:#64748b; margin-bottom:20px;">Hedef Sıralamanıza ulaşmak için en güncel ÖSYM yığılma tablosuna göre yapmanız gereken rasyonel minimum net kombinasyonu hesaplanır.</p>
-                <button class="secondary-btn" onclick="gerekenNetleriBul()">Hedefim İçin Gereken Netleri Bul</button>
-            </div>
-        </div>
-
-        <div id="sonucEkrani" class="result-card" style="display:none;"></div>
-        
-        <button id="raporBtn" class="report-btn" style="display:none;" onclick="reklamIzle()">
-            🔒 Profesyonel Analiz Raporunu Aç (Reklam İzle)
-        </button>
-
-        <div id="reklamAlani" class="ad-loader" style="display:none;">
-            <div class="spinner"></div>
-            <p style="color:#64748b; font-size:14px; font-weight:600;">Premium Rapor Hazırlanıyor... (3 sn)</p>
-        </div>
-
-        <div id="detayliRapor" class="report-card" style="display:none;"></div>
-
     </div>
-    <script src="script.js"></script>
-<!-- REKLAM BEKLETME EKRANI -->
-<div id="reklamKilidi" class="kilit-kaplamasi">
-    <div class="kilit-kutusu">
-        <h3>Sonuçlarınız Hesaplanıyor... 🚀</h3>
-        <p>Sistemi ücretsiz tutabilmemiz için sponsorlu bağlantıya yönlendiriliyorsunuz.</p>
-        <p class="sayac-metni"><span id="saniyeGosterge">10</span> saniye sonra sonuçlar açılacak...</p>
-        
-        <!-- Yükleniyor (Spinner) Çemberi -->
-        <div class="spinner"></div>
+
+    <!-- SEKMELER (TABS) -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="sekmeDegistir('anlik', this)">Anlık Net Hesapla</button>
+        <button class="tab-btn" onclick="sekmeDegistir('simulasyon', this)">İhtimal Simülatörü</button>
+        <button class="tab-btn" onclick="sekmeDegistir('gereken', this)">Gereken Netler</button>
     </div>
+
+    <!-- SEKME 1: ANLIK HESAPLA -->
+    <div id="anlikSekmesi" class="tab-content active-content">
+        <div class="net-card">
+            <h4>TYT Netleriniz</h4>
+            <div class="net-grid">
+                <input type="number" id="pTr" placeholder="Türkçe">
+                <input type="number" id="pMat" placeholder="Mat">
+                <input type="number" id="pSos" placeholder="Sosyal">
+                <input type="number" id="pFen" placeholder="Fen">
+            </div>
+        </div>
+        <div class="net-card" id="pAytKarti">
+            <h4>AYT Netleriniz</h4>
+            <div class="net-grid">
+                <input type="number" id="pAMat" placeholder="Mat">
+                <input type="number" id="pAFiz" placeholder="Fizik">
+                <input type="number" id="pAKim" placeholder="Kimya">
+                <input type="number" id="pABiy" placeholder="Biyoloji">
+                <input type="number" id="pAEd" placeholder="Edeb">
+                <input type="number" id="pATar1" placeholder="Tar-1">
+                <input type="number" id="pACog1" placeholder="Coğ-1">
+                <input type="number" id="pATar2" placeholder="Tar-2">
+                <input type="number" id="pACog2" placeholder="Coğ-2">
+                <input type="number" id="pAFel" placeholder="Fels">
+                <input type="number" id="pADin" placeholder="Din">
+            </div>
+        </div>
+        <button class="action-btn" onclick="anlikHesapla()">SONUCU HESAPLA</button>
+    </div>
+
+    <!-- SEKME 2: İHTİMAL SİMÜLATÖRÜ -->
+    <div id="simulasyonSekmesi" class="tab-content">
+        <div class="net-card">
+            <h4>Hedeflenen TYT Netleri</h4>
+            <div class="net-grid">
+                <input type="number" id="tTrH" placeholder="Türkçe">
+                <input type="number" id="tMatH" placeholder="Mat">
+                <input type="number" id="tSosH" placeholder="Sosyal">
+                <input type="number" id="tFenH" placeholder="Fen">
+            </div>
+        </div>
+        <div class="net-card" id="aytKarti">
+            <h4>Hedeflenen AYT Netleri</h4>
+            <div class="net-grid">
+                <input type="number" id="aMatH" placeholder="Mat">
+                <input type="number" id="aFizH" placeholder="Fizik">
+                <input type="number" id="aKimH" placeholder="Kimya">
+                <input type="number" id="aBiyH" placeholder="Biyoloji">
+                <input type="number" id="aEdH" placeholder="Edeb">
+                <input type="number" id="aTar1H" placeholder="Tar-1">
+                <input type="number" id="aCog1H" placeholder="Coğ-1">
+                <input type="number" id="aTar2H" placeholder="Tar-2">
+                <input type="number" id="aCog2H" placeholder="Coğ-2">
+                <input type="number" id="aFelH" placeholder="Fels">
+                <input type="number" id="aDinH" placeholder="Din">
+            </div>
+        </div>
+        <button class="action-btn" onclick="simulasyonuBaslat()">İHTİMAL SİMÜLASYONUNU BAŞLAT</button>
+    </div>
+
+    <!-- SEKME 3: GEREKEN NETLER -->
+    <div id="gerekenSekmesi" class="tab-content">
+        <div class="net-card" style="text-align: center;">
+            <p style="font-size: 15px; color: #475569; margin: 0;">Yukarıda girdiğiniz <b>Hedef Sıralamaya</b> ulaşmanız için gereken en optimal (Yapay Zeka destekli) net kombinasyonu hesaplanacaktır.</p>
+        </div>
+        <button class="action-btn" onclick="gerekenNetleriBul()">GEREKEN NETLERİ BUL</button>
+    </div>
+
+    <!-- REKLAM (KİLİT) ALANI -->
+    <div id="reklamAlani"></div>
+
+    <!-- SONUÇ EKRANI -->
+    <div id="sonucEkrani"></div>
+    <button id="raporBtn" class="action-btn" onclick="reklamIzle()">PREMIUM RAPOR OLUŞTUR (Ücretsiz)</button>
+    <div id="detayliRapor"></div>
 </div>
-</body>
-</html>
+
+<!-- JAVASCRIPT BÖLÜMÜ -->
+<script>
+// 1. SEKME YÖNETİMİ
+function sekmeDegistir(sekmeId, tiklananButon) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
+    if (tiklananButon) tiklananButon.classList.add('active');
+    
+    let hedefSekme = document.getElementById(sekmeId + 'Sekmesi');
+    if (hedefSekme) hedefSekme.classList.add('active-content');
+    
+    document.getElementById("sonucEkrani").style.display = "none";
+    document.getElementById("raporBtn").style.display = "none";
+    document.getElementById("detayliRapor").style.display = "none";
+    document.getElementById("reklamAlani").style.display = "none";
+}
+
+function alanKontrol() {
+    let alan = document.getElementById("alanSecimi").value;
+    let ayt1 = document.getElementById("aytKarti");
+    let ayt2 = document.getElementById("pAytKarti");
+    if (alan === "TYT") {
+        if(ayt1) ayt1.classList.add("disabled-card");
+        if(ayt2) ayt2.classList.add("disabled-card");
+    } else {
+        if(ayt1) ayt1.classList.remove("disabled-card");
+        if(ayt2) ayt2.classList.remove("disabled-card");
+    }
+}
+
+// 2. ORTAK VERİ YÖNETİMİ
+function ortakVerileriAl(hedefSartMi = true) {
+    let alan = document.getElementById("alanSecimi").value;
+    let obpGirdi = parseFloat(document.getElementById("obp").value);
+    let hedefSiralama = parseInt(document.getElementById("hedefSiralama").value) || 0;
+    let kalanGun = parseInt(document.getElementById("kalanGun").value) || 0;
+    let kirikObp = document.getElementById("kirikObp").checked;
+
+    if (isNaN(obpGirdi)) { alert("Lütfen Diploma Notunuzu veya OBP Puanınızı giriniz."); return null; }
+    let gercekObp = obpGirdi;
+    if (obpGirdi > 100 && obpGirdi <= 500) { gercekObp = obpGirdi / 5; } 
+    else if (obpGirdi < 50 || obpGirdi > 500) { alert("Geçersiz değer: Lütfen Diploma Notu (50-100) veya YKS OBP Puanı (250-500) giriniz."); return null; }
+
+    if (hedefSartMi && (hedefSiralama < 1 || kalanGun < 1)) { alert("Hedef Sıralama ve Kalan Gün bilgileri zorunludur."); return null; }
+    
+    let obpKatkisi = kirikObp ? (gercekObp * 0.3) : (gercekObp * 0.6);
+    return { alan, obpKatkisi, hedefSiralama, kalanGun, kirikObp, gercekObp };
+}
+
+function f25(val) { return (Math.ceil(val * 4) / 4).toFixed(2); }
+
+// 3. YASAL NET JENERATÖRÜ
+const validNetsCache = {};
+function generateValidNets(maxQ) {
+    if(validNetsCache[maxQ]) return validNetsCache[maxQ];
+    let set = new Set();
+    for(let c=0; c<=maxQ; c++) { for(let w=0; w<=(maxQ-c); w++) { set.add(c - w * 0.25); } }
+    let arr = Array.from(set).sort((a,b) => a-b);
+    validNetsCache[maxQ] = arr;
+    return arr;
+}
+function getNextValidNet(current, maxQ) {
+    let arr = generateValidNets(maxQ);
+    for(let i=0; i<arr.length; i++) { if(arr[i] > current) return arr[i]; }
+    return current;
+}
+
+// 4. ÇİFT ÇIPALI YIĞILMA MATRİSİ 
+const yigilmaHam = {
+    "TYT": [ {p:500,s:1}, {p:480,s:2000}, {p:460.3,s:7300}, {p:440,s:20000}, {p:420,s:40000}, {p:400,s:62000}, {p:385.5,s:80300}, {p:370,s:105000}, {p:350,s:145000}, {p:330,s:210000}, {p:300,s:350000}, {p:250,s:1000000}, {p:200,s:1800000}, {p:0,s:3000000} ],
+    "SAY": [ {p:500,s:1}, {p:480,s:1000}, {p:460,s:4000}, {p:439.5,s:10083}, {p:420,s:20000}, {p:400,s:35000}, {p:380,s:60000}, {p:360,s:90000}, {p:340,s:125000}, {p:320,s:170000}, {p:300,s:220000}, {p:250,s:380000}, {p:200,s:650000}, {p:0,s:1500000} ],
+    "EA":  [ {p:500,s:1}, {p:460,s:1000}, {p:420,s:4000}, {p:400,s:8000}, {p:380,s:14000}, {p:340,s:32000}, {p:320,s:50000}, {p:300,s:80000}, {p:280,s:130000}, {p:250,s:220000}, {p:200,s:500000}, {p:0,s:1200000} ],
+    "SOZ": [ {p:500,s:1}, {p:460,s:500}, {p:420,s:3000}, {p:400,s:8000}, {p:380,s:15000}, {p:360,s:25000}, {p:340,s:40000}, {p:320,s:60000}, {p:300,s:90000}, {p:280,s:140000}, {p:250,s:250000}, {p:200,s:500000}, {p:0,s:1000000} ]
+};
+const yigilmaYerlesme = {
+    "TYT": [ {p:560,s:1}, {p:540,s:2000}, {p:514.8,s:9170}, {p:490,s:25000}, {p:470,s:45000}, {p:450,s:70000}, {p:424.5,s:107725}, {p:400,s:155000}, {p:380,s:220000}, {p:360,s:330000}, {p:340,s:480000}, {p:300,s:900000}, {p:250,s:1600000}, {p:0,s:3000000} ],
+    "SAY": [ {p:560,s:1}, {p:540,s:1000}, {p:520,s:3500}, {p:494.0,s:11172}, {p:470,s:22000}, {p:450,s:38000}, {p:420,s:75000}, {p:390,s:120000}, {p:360,s:180000}, {p:330,s:250000}, {p:300,s:340000}, {p:250,s:600000}, {p:0,s:1500000} ],
+    "EA":  [ {p:560,s:1}, {p:520,s:1000}, {p:480,s:4000}, {p:450,s:8000}, {p:420,s:18000}, {p:380,s:45000}, {p:350,s:85000}, {p:320,s:140000}, {p:290,s:220000}, {p:250,s:400000}, {p:0,s:1200000} ],
+    "SOZ": [ {p:560,s:1}, {p:520,s:500}, {p:480,s:2000}, {p:450,s:6000}, {p:420,s:15000}, {p:400,s:25000}, {p:380,s:45000}, {p:360,s:70000}, {p:340,s:100000}, {p:320,s:140000}, {p:300,s:200000}, {p:250,s:400000}, {p:0,s:1000000} ]
+};
+
+function siralamayaCevir(puan, alan, isHam = false) {
+    let tablo = isHam ? yigilmaHam[alan] : yigilmaYerlesme[alan];
+    let maxP = isHam ? 500 : 560;
+    if (puan >= maxP) return 1;
+    for (let i = 0; i < tablo.length - 1; i++) {
+        if (puan <= tablo[i].p && puan > tablo[i+1].p) {
+            let oran = (puan - tablo[i+1].p) / (tablo[i].p - tablo[i+1].p);
+            return Math.floor(tablo[i+1].s - ((tablo[i+1].s - tablo[i].s) * oran));
+        }
+    }
+    return tablo[tablo.length - 1].s;
+}
+
+// 5. MERKEZİ HESAPLAMA MOTORU 
+function masterHesapla(alan, obpKatkisi, n) {
+    let tTr_p = (n.tr || 0)*3.3, tMat_p = (n.mat || 0)*3.4, tSos_p = (n.sos || 0)*3.4, tFen_p = (n.fen || 0)*3.4;
+    let tytNetPuani = tTr_p + tMat_p + tSos_p + tFen_p;
+    let tytHam = 100 + tytNetPuani;
+    let alanHam = 100 + (tytNetPuani * 0.4); 
+
+    if (alan === "TYT") { alanHam = tytHam; } 
+    else if (alan === "SAY") { alanHam += ((n.aMat || 0)*3.0) + ((n.aFiz || 0)*2.85) + ((n.aKim || 0)*3.07) + ((n.aBiy || 0)*3.07); } 
+    else if (alan === "EA") { alanHam += ((n.aMat || 0)*3.0) + ((n.aEd || 0)*3.0) + ((n.aTar1 || 0)*2.8) + ((n.aCog1 || 0)*3.33); } 
+    else if (alan === "SOZ") { alanHam += ((n.aEd || 0)*3.0) + ((n.aTar1 || 0)*2.8) + ((n.aCog1 || 0)*3.33) + ((n.aTar2 || 0)*2.91) + ((n.aCog2 || 0)*2.91) + ((n.aFel || 0)*3.0) + ((n.aDin || 0)*3.33); }
+
+    let tytHamSira = siralamayaCevir(tytHam, "TYT", true);
+    let alanHamSira = siralamayaCevir(alanHam, alan, true);
+    let tytYerPuan = tytHam + obpKatkisi;
+    let tytYerSira = siralamayaCevir(tytYerPuan, "TYT", false);
+    let alanYerPuan = alanHam + obpKatkisi;
+    let alanYerSira = siralamayaCevir(alanYerPuan, alan, false);
+
+    return { tytHamPuan: tytHam, tytHamSira: tytHamSira, tytYerPuan: tytYerPuan, tytYerSira: tytYerSira, alanHamPuan: alanHam, alanHamSira: alanHamSira, alanYerPuan: alanYerPuan, alanYerSira: alanYerSira };
+}
+
+let hData = {}, gOlasilik = 0, gAlan = "", gHedefIstenen = 0, gObpKatkisi = 0;
+
+// ⭐ REKLAM VE BEKLEME EKRANI ⭐
+function reklamOynat(mesaj, callback) {
+    document.getElementById("sonucEkrani").style.display = "none";
+    document.getElementById("raporBtn").style.display = "none";
+    document.getElementById("detayliRapor").style.display = "none";
+    
+    // Adsterra Direct Link (Yeni Sekmede)
+    window.open("https://www.profitableratecpmnetwork.com/p6sn97m6?key=78ad20d9a14e1cdc3312774076d4844e", "_blank");
+
+    let reklamDiv = document.getElementById("reklamAlani");
+    let kalanSaniye = 10; 
+    
+    reklamDiv.innerHTML = `<div class="spinner"></div><p style="color:#64748b; font-size:15px; font-weight:600;">${mesaj}</p><p style="color:#e74c3c; font-size:16px; font-weight:bold;">Sonuçlar için <span id="saniyeGosterge">${kalanSaniye}</span> saniye bekleyiniz...</p>`;
+    reklamDiv.style.display = "block";
+    reklamDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    let geriSayim = setInterval(() => {
+        kalanSaniye--;
+        let gosterge = document.getElementById("saniyeGosterge");
+        if (gosterge) gosterge.innerText = kalanSaniye;
+
+        if (kalanSaniye <= 0) {
+            clearInterval(geriSayim);
+            reklamDiv.style.display = "none";
+            callback(); 
+            document.getElementById("sonucEkrani").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, 1000); 
+}
+
+// SEKME 1 İŞLEVİ
+function anlikHesapla() {
+    let veriler = ortakVerileriAl(false);
+    if (!veriler) return;
+
+    reklamOynat("Sistem Yükleniyor... (Sponsorlu Bağlantıya Yönlendiriliyorsunuz)", () => {
+        let n = { tr: parseFloat(document.getElementById("pTr").value)||0, mat: parseFloat(document.getElementById("pMat").value)||0, sos: parseFloat(document.getElementById("pSos").value)||0, fen: parseFloat(document.getElementById("pFen").value)||0, aMat: parseFloat(document.getElementById("pAMat").value)||0, aFiz: parseFloat(document.getElementById("pAFiz").value)||0, aKim: parseFloat(document.getElementById("pAKim").value)||0, aBiy: parseFloat(document.getElementById("pABiy").value)||0, aEd: parseFloat(document.getElementById("pAEd").value)||0, aTar1: parseFloat(document.getElementById("pATar1").value)||0, aCog1: parseFloat(document.getElementById("pACog1").value)||0, aTar2: parseFloat(document.getElementById("pATar2").value)||0, aCog2: parseFloat(document.getElementById("pACog2").value)||0, aFel: parseFloat(document.getElementById("pAFel").value)||0, aDin: parseFloat(document.getElementById("pADin").value)||0 };
+        let res = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
+        let html = `<h4 style="margin-top:0; color:#0f172a;">📊 Puan ve Sıralama Sonucunuz</h4><div style="overflow-x:auto;"><table class="report-table"><tr><th style="text-align:left;">Puan Türü</th><th>Tahmini Puan</th><th>Ham Sıra</th><th>OBP Puanı</th><th>Yerleştirme Puanı</th><th>Yerleştirme Sırası</th></tr><tr><td style="text-align:left;"><strong>TYT</strong></td><td>${res.tytHamPuan.toFixed(2)}</td><td>${res.tytHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td><td>${res.tytYerPuan.toFixed(2)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.tytYerSira.toLocaleString()}</strong></td></tr>`;
+        if (veriler.alan !== "TYT") {
+            let alanIsmi = veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
+            html += `<tr><td style="text-align:left;"><strong>${alanIsmi}</strong></td><td>${res.alanHamPuan.toFixed(2)}</td><td>${res.alanHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td><td>$
