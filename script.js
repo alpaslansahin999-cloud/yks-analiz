@@ -50,7 +50,6 @@ function ortakVerileriAl(hedefSartMi = true) {
         alert("Hedef Sıralama ve Kalan Gün bilgileri simülasyon için zorunludur."); return null;
     }
     
-    // OBP'nin net getirisi: Diploma notu * 0.6
     let obpKatkisi = kirikObp ? (gercekObp * 0.3) : (gercekObp * 0.6);
     return { alan, obpKatkisi, hedefSiralama, kalanGun, kirikObp, gercekObp };
 }
@@ -58,7 +57,7 @@ function ortakVerileriAl(hedefSartMi = true) {
 function f25(val) { return (Math.ceil(val * 4) / 4).toFixed(2); }
 
 // ==========================================
-// 3. YASAL NET JENERATÖRÜ (Hayalet Net Engeli)
+// 3. YASAL NET JENERATÖRÜ 
 // ==========================================
 const validNetsCache = {};
 function generateValidNets(maxQ) {
@@ -84,34 +83,17 @@ function getNextValidNet(current, maxQ) {
 
 // ==========================================
 // 4. ÇİFT ÇIPALI 2024 YIĞILMA MATRİSİ 
-// Hem 7K (107 Net) hem de 107K (85 Net) referanslarına tam kilitlenmiştir.
 // ==========================================
 const yigilmaHam = {
-    "TYT": [ 
-        {p:500,s:1}, {p:480,s:2000}, {p:460.3,s:7300}, {p:440,s:20000}, {p:420,s:40000},
-        {p:400,s:62000}, {p:385.5,s:80300}, {p:370,s:105000}, {p:350,s:145000}, {p:330,s:210000}, 
-        {p:300,s:350000}, {p:250,s:1000000}, {p:200,s:1800000}, {p:0,s:3000000} 
-    ],
-    "SAY": [ 
-        {p:500,s:1}, {p:480,s:1000}, {p:460,s:4000}, {p:439.5,s:10083}, {p:420,s:20000},
-        {p:400,s:35000}, {p:380,s:60000}, {p:360,s:90000}, {p:340,s:125000}, {p:320,s:170000}, 
-        {p:300,s:220000}, {p:250,s:380000}, {p:200,s:650000}, {p:0,s:1500000} 
-    ],
+    "TYT": [ {p:500,s:1}, {p:480,s:2000}, {p:460.3,s:7300}, {p:440,s:20000}, {p:420,s:40000}, {p:400,s:62000}, {p:385.5,s:80300}, {p:370,s:105000}, {p:350,s:145000}, {p:330,s:210000}, {p:300,s:350000}, {p:250,s:1000000}, {p:200,s:1800000}, {p:0,s:3000000} ],
+    "SAY": [ {p:500,s:1}, {p:480,s:1000}, {p:460,s:4000}, {p:439.5,s:10083}, {p:420,s:20000}, {p:400,s:35000}, {p:380,s:60000}, {p:360,s:90000}, {p:340,s:125000}, {p:320,s:170000}, {p:300,s:220000}, {p:250,s:380000}, {p:200,s:650000}, {p:0,s:1500000} ],
     "EA":  [ {p:500,s:1}, {p:460,s:1000}, {p:420,s:4000}, {p:400,s:8000}, {p:380,s:14000}, {p:340,s:32000}, {p:320,s:50000}, {p:300,s:80000}, {p:280,s:130000}, {p:250,s:220000}, {p:200,s:500000}, {p:0,s:1200000} ],
     "SOZ": [ {p:500,s:1}, {p:460,s:500}, {p:420,s:3000}, {p:400,s:8000}, {p:380,s:15000}, {p:360,s:25000}, {p:340,s:40000}, {p:320,s:60000}, {p:300,s:90000}, {p:280,s:140000}, {p:250,s:250000}, {p:200,s:500000}, {p:0,s:1000000} ]
 };
 
 const yigilmaYerlesme = {
-    "TYT": [ 
-        {p:560,s:1}, {p:540,s:2000}, {p:514.8,s:9170}, {p:490,s:25000}, {p:470,s:45000},
-        {p:450,s:70000}, {p:424.5,s:107725}, {p:400,s:155000}, {p:380,s:220000}, {p:360,s:330000}, 
-        {p:340,s:480000}, {p:300,s:900000}, {p:250,s:1600000}, {p:0,s:3000000} 
-    ],
-    "SAY": [ 
-        {p:560,s:1}, {p:540,s:1000}, {p:520,s:3500}, {p:494.0,s:11172}, {p:470,s:22000},
-        {p:450,s:38000}, {p:420,s:75000}, {p:390,s:120000}, {p:360,s:180000}, {p:330,s:250000}, 
-        {p:300,s:340000}, {p:250,s:600000}, {p:0,s:1500000} 
-    ],
+    "TYT": [ {p:560,s:1}, {p:540,s:2000}, {p:514.8,s:9170}, {p:490,s:25000}, {p:470,s:45000}, {p:450,s:70000}, {p:424.5,s:107725}, {p:400,s:155000}, {p:380,s:220000}, {p:360,s:330000}, {p:340,s:480000}, {p:300,s:900000}, {p:250,s:1600000}, {p:0,s:3000000} ],
+    "SAY": [ {p:560,s:1}, {p:540,s:1000}, {p:520,s:3500}, {p:494.0,s:11172}, {p:470,s:22000}, {p:450,s:38000}, {p:420,s:75000}, {p:390,s:120000}, {p:360,s:180000}, {p:330,s:250000}, {p:300,s:340000}, {p:250,s:600000}, {p:0,s:1500000} ],
     "EA":  [ {p:560,s:1}, {p:520,s:1000}, {p:480,s:4000}, {p:450,s:8000}, {p:420,s:18000}, {p:380,s:45000}, {p:350,s:85000}, {p:320,s:140000}, {p:290,s:220000}, {p:250,s:400000}, {p:0,s:1200000} ],
     "SOZ": [ {p:560,s:1}, {p:520,s:500}, {p:480,s:2000}, {p:450,s:6000}, {p:420,s:15000}, {p:400,s:25000}, {p:380,s:45000}, {p:360,s:70000}, {p:340,s:100000}, {p:320,s:140000}, {p:300,s:200000}, {p:250,s:400000}, {p:0,s:1000000} ]
 };
@@ -176,26 +158,50 @@ function masterHesapla(alan, obpKatkisi, n) {
 
 let hData = {}, gOlasilik = 0, gAlan = "", gHedefIstenen = 0, gObpMetni = "", gObpKatkisi = 0;
 
-// REKLAM MOTORU
+
+// ==========================================
+// ⭐ ADSTERRA REKLAM VE BEKLEME EKRANI ENTEGRASYONU ⭐
+// ==========================================
 function reklamOynat(mesaj, callback) {
     document.getElementById("sonucEkrani").style.display = "none";
     document.getElementById("raporBtn").style.display = "none";
     document.getElementById("detayliRapor").style.display = "none";
     
+    // 1. Yeni sekmede Adsterra Reklamını (Direct Link) aç
+    window.open("https://www.profitableratecpmnetwork.com/p6sn97m6?key=78ad20d9a14e1cdc3312774076d4844e", "_blank");
+
+    // 2. Kendi ekranımızda (Zaten var olan reklamAlani div'inde) yükleniyor animasyonu ve sayacı göster
     let reklamDiv = document.getElementById("reklamAlani");
-    reklamDiv.innerHTML = `<div class="spinner"></div><p style="color:#64748b; font-size:14px; font-weight:600;">${mesaj}</p>`;
+    let kalanSaniye = 5; // Burayı istersen 10 saniye yapabilirsin
+    
+    reklamDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p style="color:#64748b; font-size:15px; font-weight:600; margin-top:15px;">${mesaj}</p>
+        <p style="color:#e74c3c; font-size:14px; font-weight:bold; margin-top:10px;">Lütfen <span id="saniyeGosterge">${kalanSaniye}</span> saniye bekleyin...</p>
+    `;
     reklamDiv.style.display = "block";
     reklamDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    setTimeout(() => {
-        reklamDiv.style.display = "none";
-        callback(); 
-        document.getElementById("sonucEkrani").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 3000); 
+    // 3. Geri sayım işlemi
+    let geriSayim = setInterval(() => {
+        kalanSaniye--;
+        let gosterge = document.getElementById("saniyeGosterge");
+        if (gosterge) gosterge.innerText = kalanSaniye;
+
+        // Süre bitince
+        if (kalanSaniye <= 0) {
+            clearInterval(geriSayim);
+            reklamDiv.style.display = "none";
+            
+            // Gerçek hesaplama (anlikHesapla vb.) fonksiyonunu çalıştır
+            callback(); 
+            document.getElementById("sonucEkrani").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, 1000); 
 }
 
 // ==========================================
-// SEKME 1: ANLIK HESAPLAMA (RAPOR BUTONU GİZLİ)
+// SEKME 1: ANLIK HESAPLAMA
 // ==========================================
 function anlikHesapla() {
     let veriler = ortakVerileriAl(false);
@@ -250,7 +256,7 @@ function anlikHesapla() {
 }
 
 // ==========================================
-// SEKME 2: İHTİMAL SİMÜLATÖRÜ (RAPOR BUTONU BURADA AÇIK)
+// SEKME 2: İHTİMAL SİMÜLATÖRÜ 
 // ==========================================
 function normalDagilim(ortalama, standartSapma) {
     let u = 0, v = 0; while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
@@ -323,7 +329,7 @@ function simulasyonuBaslat() {
 }
 
 // ==========================================
-// SEKME 3: HEDEF İÇİN GEREKEN NETLER (RAPOR BUTONU GİZLİ)
+// SEKME 3: HEDEF İÇİN GEREKEN NETLER
 // ==========================================
 function gerekenNetleriBul() {
     let veriler = ortakVerileriAl(true);
@@ -389,65 +395,4 @@ function detayliRaporuUret() {
     let rapor = `
         <div class="report-header">
             <h4>📋 YKS Strateji Raporu (OBP Dökümlü)</h4>
-            <span style="font-size:12px; font-weight:normal; opacity:0.8;">Gerçekçi Ham ve Yerleştirme Analizi (2024 Kalibreli)</span>
-        </div>
-        <div class="report-body">
-            <h5 style="margin-top:0; font-size:15px;">🔍 Hedef Netlerinizin Karşılığı</h5>
-            <div style="overflow-x:auto;">
-            <table class="report-table" style="min-width:600px; text-align:center;">
-                <tr>
-                    <th style="text-align:left;">Kategori</th>
-                    <th>Tahmini Puan</th>
-                    <th>Ham Sıra</th>
-                    <th>OBP (${gObpMetni})</th>
-                    <th>Yerleştirme Puanı</th>
-                    <th>Yerleştirme Sırası</th>
-                </tr>
-                <tr>
-                    <td style="text-align:left;"><strong>TYT</strong></td>
-                    <td>${hData.tytHamPuan.toFixed(2)}</td>
-                    <td>${hData.tytHamSira.toLocaleString()}</td>
-                    <td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${hData.tytYerPuan.toFixed(2)}</td>
-                    <td><strong style="color:#2563eb; font-size:15px;">${hData.tytYerSira.toLocaleString()}</strong></td>
-                </tr>
-    `;
-
-    if (gAlan !== "Sadece TYT") {
-        rapor += `
-                <tr>
-                    <td style="text-align:left;"><strong>${gAlan} <span class="badge">HEDEF ALAN</span></strong></td>
-                    <td>${hData.alanHamPuan.toFixed(2)}</td>
-                    <td>${hData.alanHamSira.toLocaleString()}</td>
-                    <td style="color:#059669;">+ ${gObpKatkisi.toFixed(2)}</td>
-                    <td>${hData.alanYerPuan.toFixed(2)}</td>
-                    <td><strong style="color:#2563eb; font-size:15px;">${hData.alanYerSira.toLocaleString()}</strong></td>
-                </tr>
-        `;
-    }
-    rapor += `</table></div>`;
-
-    if (gHedefIstenen > 0) {
-        if (hData.alanYerSira <= gHedefIstenen) {
-            rapor += `
-                <div class="status-box status-success">
-                    ✅ <strong>Gidişat Harika:</strong> Tablodaki netlere ulaşırsan, hesaplanan yerleştirme sıralaman <strong>${hData.alanYerSira.toLocaleString()}</strong> oluyor ve hedefini rahatça geçiyorsun.
-                </div>`;
-        } else {
-            let fark = hData.alanYerSira - gHedefIstenen;
-            rapor += `
-                <div class="status-box status-danger">
-                    🚨 <strong>Kritik Uyarı:</strong> Hedef netlerinin tamamını yapsan bile beklenen yerleştirme sıralaman <strong>${hData.alanYerSira.toLocaleString()}</strong> kalıyor ve hedefine ulaşmak için hala <strong>${fark.toLocaleString()} kişi</strong> daha elemek zorundasın.
-                </div>`;
-        }
-    } else {
-        rapor += `
-            <div class="status-box status-success">
-                ✅ <strong>Analiz:</strong> Anlık netlerinize göre detaylı sıralama ve puan dökümünüz yukarıda verilmiştir. Bir hedef girerek strateji simülasyonu yapabilirsiniz.
-            </div>`;
-    }
-
-    rapor += `</div>`;
-    document.getElementById("detayliRapor").innerHTML = rapor;
-    document.getElementById("detayliRapor").style.display = "block";
-}
+            <span style="font-size
