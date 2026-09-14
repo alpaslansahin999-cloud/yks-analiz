@@ -1,42 +1,19 @@
 // ==========================================
-// 1. SEKME YÖNETİMİ VE ARAYÜZ (TAM KORUMALI)
+// 1. SEKME YÖNETİMİ VE ARAYÜZ (SENİN ORİJİNAL KODUN - DEĞİŞTİRİLMEDİ)
 // ==========================================
 function sekmeDegistir(sekmeId) {
-    try {
-        // 1. Aktiflikleri temizle
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
-        
-        // 2. Tıklanan butonu etiket fark etmeksizin bul ve aktif et
-        if (window.event && window.event.currentTarget) {
-            window.event.currentTarget.classList.add('active');
-        } else {
-            let aktifButon = document.querySelector(`[onclick*="${sekmeId}"]`);
-            if (aktifButon) aktifButon.classList.add('active');
-        }
-        
-        // 3. Hedef sekmeyi aç
-        let hedefSekme = document.getElementById(sekmeId + 'Sekmesi');
-        if (hedefSekme) {
-            hedefSekme.classList.add('active-content');
-        } else {
-            console.error("HTML'de şu sekme bulunamadı: " + sekmeId + "Sekmesi");
-        }
-        
-        // 4. Sayfa değiştiğinde sonuçları ve reklamı güvenlice temizle
-        let sonuc = document.getElementById("sonucEkrani");
-        let rapor = document.getElementById("raporBtn");
-        let detay = document.getElementById("detayliRapor");
-        let reklam = document.getElementById("reklamAlani");
-        
-        if (sonuc) sonuc.style.display = "none";
-        if (rapor) rapor.style.display = "none";
-        if (detay) detay.style.display = "none";
-        if (reklam) reklam.style.display = "none";
-        
-    } catch (hata) {
-        console.error("Sekme değiştirilirken bir hata oldu:", hata);
-    }
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(icerik => icerik.classList.remove('active-content'));
+    event.target.classList.add('active');
+    document.getElementById(sekmeId + 'Sekmesi').classList.add('active-content');
+    
+    document.getElementById("sonucEkrani").style.display = "none";
+    document.getElementById("raporBtn").style.display = "none";
+    document.getElementById("detayliRapor").style.display = "none";
+    
+    // Reklam alanı açıksa sekmeye geçince kapansın (tek eklenti)
+    let reklamDiv = document.getElementById("reklamAlani");
+    if(reklamDiv) reklamDiv.style.display = "none";
 }
 
 function alanKontrol() {
@@ -54,7 +31,7 @@ function alanKontrol() {
 }
 
 // ==========================================
-// 2. OBP VE ORTAK VERİ YÖNETİMİ
+// 2. OBP VE ORTAK VERİ YÖNETİMİ (SENİN ORİJİNAL KODUN)
 // ==========================================
 function ortakVerileriAl(hedefSartMi = true) {
     let alan = document.getElementById("alanSecimi").value;
@@ -85,7 +62,7 @@ function ortakVerileriAl(hedefSartMi = true) {
 function f25(val) { return (Math.ceil(val * 4) / 4).toFixed(2); }
 
 // ==========================================
-// 3. YASAL NET JENERATÖRÜ (Hayalet Net Engeli)
+// 3. YASAL NET JENERATÖRÜ 
 // ==========================================
 const validNetsCache = {};
 function generateValidNets(maxQ) {
@@ -173,43 +150,50 @@ function masterHesapla(alan, obpKatkisi, n) {
     let alanYerSira = siralamayaCevir(alanYerPuan, alan, false);
 
     return { 
-        tytHamPuan: tytHam, 
-        tytHamSira: tytHamSira, 
-        tytYerPuan: tytYerPuan, 
-        tytYerSira: tytYerSira, 
-        alanHamPuan: alanHam, 
-        alanHamSira: alanHamSira, 
-        alanYerPuan: alanYerPuan, 
-        alanYerSira: alanYerSira 
+        tytHamPuan: tytHam, tytHamSira: tytHamSira, tytYerPuan: tytYerPuan, tytYerSira: tytYerSira, 
+        alanHamPuan: alanHam, alanHamSira: alanHamSira, alanYerPuan: alanYerPuan, alanYerSira: alanYerSira 
     };
 }
 
 let hData = {}, gOlasilik = 0, gAlan = "", gHedefIstenen = 0, gObpMetni = "", gObpKatkisi = 0;
 
 // ==========================================
-// ⭐ YENİ ADSTERRA REKLAM MOTORU ⭐
+// ⭐ YENİ ADSTERRA REKLAM MOTORU (SORUNSUZ ÇALIŞAN HALİ) ⭐
 // ==========================================
 function reklamOynat(mesaj, callback) {
     document.getElementById("sonucEkrani").style.display = "none";
     document.getElementById("raporBtn").style.display = "none";
     document.getElementById("detayliRapor").style.display = "none";
     
-    // Adsterra Linkini Yeni Sekmede Aç (Popup engelleyicilere takılmaması için try-catch eklendi)
-    try {
-        window.open("https://www.profitableratecpmnetwork.com/p6sn97m6?key=78ad20d9a14e1cdc3312774076d4844e", "_blank");
-    } catch(e) {}
+    // Popup Engelleyicileri Aşmak İçin
+    try { window.open("https://www.profitableratecpmnetwork.com/p6sn97m6?key=78ad20d9a14e1cdc3312774076d4844e", "_blank"); } catch(e) {}
     
     let reklamDiv = document.getElementById("reklamAlani");
+    
+    // EĞER HTML'DE REKLAM ALANI YOKSA DİREKT HESAPLAMAYA GEÇ (KİTLENMEYİ ÖNLER)
+    if (!reklamDiv) {
+        callback();
+        return;
+    }
+    
     let kalanSaniye = 10;
     
+    // HTML tasarımsız da olsa çalışması için style ile güçlendirildi
     reklamDiv.innerHTML = `
-        <div class="spinner" style="margin:20px auto;"></div>
+        <div style="border: 5px solid #f3f3f3; border-top: 5px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px auto;"></div>
         <p style="color:#64748b; font-size:15px; font-weight:600; text-align:center;">${mesaj}</p>
-        <p style="color:#e74c3c; font-size:16px; font-weight:bold; text-align:center;">
-            Sonuçlar için <span id="saniyeGosterge">${kalanSaniye}</span> saniye bekleyiniz...
+        <p style="color:#e74c3c; font-size:14px; font-weight:bold; text-align:center; margin-top:5px;">
+            Sonuçlar <span id="saniyeGosterge">${kalanSaniye}</span> saniye içinde gösterilecek...
         </p>
+        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
     `;
+    
     reklamDiv.style.display = "block";
+    reklamDiv.style.padding = "20px";
+    reklamDiv.style.margin = "20px 0";
+    reklamDiv.style.background = "#fff";
+    reklamDiv.style.border = "2px dashed #cbd5e1";
+    reklamDiv.style.borderRadius = "10px";
     reklamDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     let geriSayim = setInterval(() => {
@@ -221,7 +205,8 @@ function reklamOynat(mesaj, callback) {
             clearInterval(geriSayim);
             reklamDiv.style.display = "none";
             callback(); 
-            document.getElementById("sonucEkrani").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            let sonucEkrani = document.getElementById("sonucEkrani");
+            if(sonucEkrani) sonucEkrani.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }, 1000); 
 }
@@ -233,48 +218,29 @@ function anlikHesapla() {
     let veriler = ortakVerileriAl(false);
     if (!veriler) return;
 
-    reklamOynat("Sonuçlar Hesaplanıyor... (Sponsorlu Reklama Yönlendiriliyorsunuz)", () => {
+    reklamOynat("Sistem Yükleniyor... (Sponsorlu Bağlantıya Yönlendiriliyorsunuz)", () => {
         let n = {
-            tr: parseFloat(document.getElementById("pTr").value) || 0, 
-            mat: parseFloat(document.getElementById("pMat").value) || 0,
-            sos: parseFloat(document.getElementById("pSos").value) || 0, 
-            fen: parseFloat(document.getElementById("pFen").value) || 0,
-            aMat: parseFloat(document.getElementById("pAMat").value) || 0, 
-            aFiz: parseFloat(document.getElementById("pAFiz").value) || 0,
-            aKim: parseFloat(document.getElementById("pAKim").value) || 0, 
-            aBiy: parseFloat(document.getElementById("pABiy").value) || 0,
-            aEd: parseFloat(document.getElementById("pAEd").value) || 0, 
-            aTar1: parseFloat(document.getElementById("pATar1").value) || 0,
-            aCog1: parseFloat(document.getElementById("pACog1").value) || 0, 
-            aTar2: parseFloat(document.getElementById("pATar2").value) || 0,
-            aCog2: parseFloat(document.getElementById("pACog2").value) || 0, 
-            aFel: parseFloat(document.getElementById("pAFel").value) || 0,
+            tr: parseFloat(document.getElementById("pTr").value) || 0, mat: parseFloat(document.getElementById("pMat").value) || 0,
+            sos: parseFloat(document.getElementById("pSos").value) || 0, fen: parseFloat(document.getElementById("pFen").value) || 0,
+            aMat: parseFloat(document.getElementById("pAMat").value) || 0, aFiz: parseFloat(document.getElementById("pAFiz").value) || 0,
+            aKim: parseFloat(document.getElementById("pAKim").value) || 0, aBiy: parseFloat(document.getElementById("pABiy").value) || 0,
+            aEd: parseFloat(document.getElementById("pAEd").value) || 0, aTar1: parseFloat(document.getElementById("pATar1").value) || 0,
+            aCog1: parseFloat(document.getElementById("pACog1").value) || 0, aTar2: parseFloat(document.getElementById("pATar2").value) || 0,
+            aCog2: parseFloat(document.getElementById("pACog2").value) || 0, aFel: parseFloat(document.getElementById("pAFel").value) || 0,
             aDin: parseFloat(document.getElementById("pADin").value) || 0
         };
 
         let res = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
-
-        let html = `
-            <h4 style="margin-top:0; color:#0f172a;">📊 Puan ve Sıralama Sonucunuz</h4>
+        let html = `<h4 style="margin-top:0; color:#0f172a;">📊 Puan ve Sıralama Sonucunuz</h4>
             <div style="overflow-x:auto;">
-            <table class="report-table" style="margin-bottom:0; min-width:600px; text-align:center;">
-                <tr><th style="text-align:left;">Puan Türü</th><th>Tahmini Puan</th><th>Ham Sıra</th><th>OBP Puanı</th><th>Yerleştirme Puanı</th><th>Yerleştirme Sırası</th></tr>
-                <tr>
-                    <td style="text-align:left;"><strong>TYT</strong></td>
-                    <td>${res.tytHamPuan.toFixed(2)}</td><td>${res.tytHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td>
-                    <td>${res.tytYerPuan.toFixed(2)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.tytYerSira.toLocaleString()}</strong></td>
-                </tr>`;
+            <table class="report-table" style="width:100%; border-collapse:collapse; text-align:center;">
+                <tr style="background:#e2e8f0;"><th style="padding:8px;">Puan Türü</th><th style="padding:8px;">Tahmini Puan</th><th style="padding:8px;">Ham Sıra</th><th style="padding:8px;">OBP Puanı</th><th style="padding:8px;">Yerleştirme Puanı</th><th style="padding:8px;">Yerleştirme Sırası</th></tr>
+                <tr><td style="padding:8px; border:1px solid #cbd5e1; text-align:left;"><strong>TYT</strong></td><td style="padding:8px; border:1px solid #cbd5e1;">${res.tytHamPuan.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;">${res.tytHamSira.toLocaleString()}</td><td style="padding:8px; border:1px solid #cbd5e1; color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;">${res.tytYerPuan.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;"><strong style="color:#2563eb; font-size:15px;">${res.tytYerSira.toLocaleString()}</strong></td></tr>`;
         if (veriler.alan !== "TYT") {
             let alanIsmi = veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
-            html += `
-                <tr>
-                    <td style="text-align:left;"><strong>${alanIsmi}</strong></td>
-                    <td>${res.alanHamPuan.toFixed(2)}</td><td>${res.alanHamSira.toLocaleString()}</td><td style="color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td>
-                    <td>${res.alanYerPuan.toFixed(2)}</td><td><strong style="color:#2563eb; font-size:15px;">${res.alanYerSira.toLocaleString()}</strong></td>
-                </tr>`;
+            html += `<tr><td style="padding:8px; border:1px solid #cbd5e1; text-align:left;"><strong>${alanIsmi}</strong></td><td style="padding:8px; border:1px solid #cbd5e1;">${res.alanHamPuan.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;">${res.alanHamSira.toLocaleString()}</td><td style="padding:8px; border:1px solid #cbd5e1; color:#059669;">+ ${veriler.obpKatkisi.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;">${res.alanYerPuan.toFixed(2)}</td><td style="padding:8px; border:1px solid #cbd5e1;"><strong style="color:#2563eb; font-size:15px;">${res.alanYerSira.toLocaleString()}</strong></td></tr>`;
         }
         html += `</table></div>`;
-        
         document.getElementById("sonucEkrani").innerHTML = html;
         document.getElementById("sonucEkrani").style.display = "block";
         document.getElementById("raporBtn").style.display = "none"; 
@@ -289,38 +255,26 @@ function normalDagilim(ortalama, standartSapma) {
     let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v); 
     return Math.max(0, ortalama + (z * standartSapma));
 }
-
 const clamp = (val, max) => Math.min(max, Math.max(0, val));
 
 function simulasyonuBaslat() {
     let veriler = ortakVerileriAl(true);
     if (!veriler) return;
-    
-    reklamOynat("10.000 Simülasyon Senaryosu Analiz Ediliyor... (Sponsorlu Reklam)", () => {
+    reklamOynat("10.000 Simülasyon Senaryosu Analiz Ediliyor...", () => {
         let n = {
-            tr: parseFloat(document.getElementById("tTrH").value) || 0, 
-            mat: parseFloat(document.getElementById("tMatH").value) || 0,
-            sos: parseFloat(document.getElementById("tSosH").value) || 0, 
-            fen: parseFloat(document.getElementById("tFenH").value) || 0,
-            aMat: parseFloat(document.getElementById("aMatH").value) || 0, 
-            aFiz: parseFloat(document.getElementById("aFizH").value) || 0,
-            aKim: parseFloat(document.getElementById("aKimH").value) || 0, 
-            aBiy: parseFloat(document.getElementById("aBiyH").value) || 0,
-            aEd: parseFloat(document.getElementById("aEdH").value) || 0, 
-            aTar1: parseFloat(document.getElementById("aTar1H").value) || 0,
-            aCog1: parseFloat(document.getElementById("aCog1H").value) || 0, 
-            aTar2: parseFloat(document.getElementById("aTar2H").value) || 0,
-            aCog2: parseFloat(document.getElementById("aCog2H").value) || 0, 
-            aFel: parseFloat(document.getElementById("aFelH").value) || 0,
+            tr: parseFloat(document.getElementById("tTrH").value) || 0, mat: parseFloat(document.getElementById("tMatH").value) || 0,
+            sos: parseFloat(document.getElementById("tSosH").value) || 0, fen: parseFloat(document.getElementById("tFenH").value) || 0,
+            aMat: parseFloat(document.getElementById("aMatH").value) || 0, aFiz: parseFloat(document.getElementById("aFizH").value) || 0,
+            aKim: parseFloat(document.getElementById("aKimH").value) || 0, aBiy: parseFloat(document.getElementById("aBiyH").value) || 0,
+            aEd: parseFloat(document.getElementById("aEdH").value) || 0, aTar1: parseFloat(document.getElementById("aTar1H").value) || 0,
+            aCog1: parseFloat(document.getElementById("aCog1H").value) || 0, aTar2: parseFloat(document.getElementById("aTar2H").value) || 0,
+            aCog2: parseFloat(document.getElementById("aCog2H").value) || 0, aFel: parseFloat(document.getElementById("aFelH").value) || 0,
             aDin: parseFloat(document.getElementById("aDinH").value) || 0
         };
 
         gAlan = veriler.alan === "TYT" ? "Sadece TYT" : veriler.alan === "SAY" ? "Sayısal" : veriler.alan === "EA" ? "Eşit Ağırlık" : "Sözel";
-        gObpKatkisi = veriler.obpKatkisi;
-        gObpMetni = veriler.kirikObp ? "Kırık OBP" : "Normal OBP";
-        gHedefIstenen = veriler.hedefSiralama;
+        gObpKatkisi = veriler.obpKatkisi; gObpMetni = veriler.kirikObp ? "Kırık OBP" : "Normal OBP"; gHedefIstenen = veriler.hedefSiralama;
         hData = masterHesapla(veriler.alan, gObpKatkisi, n); 
-
         let basarili = 0;
         for(let i=0; i<10000; i++) {
             let sim = {
@@ -329,15 +283,11 @@ function simulasyonuBaslat() {
                 aEd: clamp(normalDagilim(n.aEd, 2.0), 24), aTar1: clamp(normalDagilim(n.aTar1, 1.5), 10), aCog1: clamp(normalDagilim(n.aCog1, 1.0), 6),
                 aTar2: clamp(normalDagilim(n.aTar2, 1.5), 11), aCog2: clamp(normalDagilim(n.aCog2, 1.5), 11), aFel: clamp(normalDagilim(n.aFel, 1.5), 12), aDin: clamp(normalDagilim(n.aDin, 1.0), 6)
             };
-            let simRes = masterHesapla(veriler.alan, gObpKatkisi, sim);
-            if (simRes.alanYerSira <= veriler.hedefSiralama) basarili++;
+            if (masterHesapla(veriler.alan, gObpKatkisi, sim).alanYerSira <= veriler.hedefSiralama) basarili++;
         }
 
         gOlasilik = (basarili / 10000) * 100;
-        document.getElementById("sonucEkrani").innerHTML = `
-            <strong>🎯 Sınav Simülasyonu Sonucu:</strong><br><br>
-            Girdiğiniz <strong>hedef netlere</strong> ulaştığınız senaryoda, sınav günü yaşanacak stres faktörleri hesaba katıldığında ${veriler.hedefSiralama.toLocaleString()} hedefine ulaşma ihtimaliniz: <strong style="font-size:18px; color:#2563eb;">%${gOlasilik.toFixed(1)}</strong>
-        `;
+        document.getElementById("sonucEkrani").innerHTML = `<strong>🎯 Sınav Simülasyonu Sonucu:</strong><br><br>Girdiğiniz <strong>hedef netlere</strong> ulaştığınız senaryoda, sınav günü yaşanacak stres faktörleri hesaba katıldığında ${veriler.hedefSiralama.toLocaleString()} hedefine ulaşma ihtimaliniz: <strong style="font-size:18px; color:#2563eb;">%${gOlasilik.toFixed(1)}</strong>`;
         document.getElementById("sonucEkrani").style.display = "block";
         document.getElementById("raporBtn").style.display = "block"; 
     });
@@ -349,56 +299,24 @@ function simulasyonuBaslat() {
 function gerekenNetleriBul() {
     let veriler = ortakVerileriAl(true);
     if (!veriler) return;
-    
-    reklamOynat("Yapay Zeka Hedefiniz İçin En Uygun Kombinasyonu Analiz Ediyor... (Reklam)", () => {
+    reklamOynat("Yapay Zeka Kombinasyonu Analiz Ediyor...", () => {
         let n = { tr:10, mat:5, sos:5, fen:2, aMat:5, aFiz:2, aKim:2, aBiy:2, aEd:5, aTar1:2, aCog1:2, aTar2:2, aCog2:2, aFel:2, aDin:2 };
-        
         let hedefler = [];
-        if (veriler.alan === "TYT") {
-            hedefler = [{k:'tr', m:40}, {k:'mat', m:40}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'sos', m:20}, {k:'fen', m:20}];
-        } else if (veriler.alan === "SAY") {
-            hedefler = [{k:'aMat', m:40}, {k:'tr', m:40}, {k:'aMat', m:40}, {k:'mat', m:40}, {k:'aFiz', m:14}, {k:'aKim', m:13}, {k:'aBiy', m:13}, {k:'tr', m:40}, {k:'mat', m:40}];
-        } else if (veriler.alan === "EA") {
-            hedefler = [{k:'aMat', m:40}, {k:'aEd', m:24}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'aMat', m:40}, {k:'aTar1', m:10}, {k:'aCog1', m:6}];
-        } else if (veriler.alan === "SOZ") {
-            hedefler = [{k:'aEd', m:24}, {k:'tr', m:40}, {k:'aEd', m:24}, {k:'sos', m:20}, {k:'aTar1', m:10}, {k:'aCog1', m:6}, {k:'aTar2', m:11}, {k:'aCog2', m:11}, {k:'aFel', m:12}];
-        }
+        if (veriler.alan === "TYT") { hedefler = [{k:'tr', m:40}, {k:'mat', m:40}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'sos', m:20}, {k:'fen', m:20}]; } 
+        else if (veriler.alan === "SAY") { hedefler = [{k:'aMat', m:40}, {k:'tr', m:40}, {k:'aMat', m:40}, {k:'mat', m:40}, {k:'aFiz', m:14}, {k:'aKim', m:13}, {k:'aBiy', m:13}, {k:'tr', m:40}, {k:'mat', m:40}]; } 
+        else if (veriler.alan === "EA") { hedefler = [{k:'aMat', m:40}, {k:'aEd', m:24}, {k:'tr', m:40}, {k:'mat', m:40}, {k:'aMat', m:40}, {k:'aTar1', m:10}, {k:'aCog1', m:6}]; } 
+        else if (veriler.alan === "SOZ") { hedefler = [{k:'aEd', m:24}, {k:'tr', m:40}, {k:'aEd', m:24}, {k:'sos', m:20}, {k:'aTar1', m:10}, {k:'aCog1', m:6}, {k:'aTar2', m:11}, {k:'aCog2', m:11}, {k:'aFel', m:12}]; }
 
-        let sira = 3000000;
-        let sayac = 0;
-        let oncekiSira = sira;
-
+        let sira = 3000000, sayac = 0, oncekiSira = sira;
         while (sira > veriler.hedefSiralama && sayac < 10000) {
             let hd = hedefler[sayac % hedefler.length];
             n[hd.k] = getNextValidNet(n[hd.k], hd.m);
-            
-            let p = masterHesapla(veriler.alan, veriler.obpKatkisi, n);
-            sira = p.alanYerSira;
+            sira = masterHesapla(veriler.alan, veriler.obpKatkisi, n).alanYerSira;
             sayac++;
-
-            if (sayac % hedefler.length === 0) {
-                if (oncekiSira === sira) break; 
-                oncekiSira = sira;
-            }
+            if (sayac % hedefler.length === 0) { if (oncekiSira === sira) break; oncekiSira = sira; }
         }
 
-        let aytGosterim = veriler.alan === "TYT" ? `<p>AYT Gerekmiyor.</p>` :
-            veriler.alan === "SAY" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Fiz ${f25(n.aFiz)} | Kim ${f25(n.aKim)} | Biy ${f25(n.aBiy)}` :
-            veriler.alan === "EA" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Ed ${f25(n.aEd)} | Tar-1 ${f25(n.aTar1)} | Coğ-1 ${f25(n.aCog1)}` :
-            `<strong>AYT:</strong> Ed ${f25(n.aEd)} | Tar-1 ${f25(n.aTar1)} | Coğ-1 ${f25(n.aCog1)} | Tar-2 ${f25(n.aTar2)} | Coğ-2 ${f25(n.aCog2)} | Fel ${f25(n.aFel)} | Din ${f25(n.aDin)}`;
-
-        document.getElementById("sonucEkrani").innerHTML = `
-            <h4 style="margin-top:0;">🎯 ${veriler.hedefSiralama.toLocaleString()} Sıralama İçin Mümkün Olan Net Dağılımı</h4>
-            <strong>TYT:</strong> Türkçe ${f25(n.tr)} | Mat ${f25(n.mat)} | Sos ${f25(n.sos)} | Fen ${f25(n.fen)}<br><br>
-            ${aytGosterim}
-        `;
+        let aytGosterim = veriler.alan === "TYT" ? `<p>AYT Gerekmiyor.</p>` : veriler.alan === "SAY" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Fiz ${f25(n.aFiz)} | Kim ${f25(n.aKim)} | Biy ${f25(n.aBiy)}` : veriler.alan === "EA" ? `<strong>AYT:</strong> Mat ${f25(n.aMat)} | Ed ${f25(n.aEd)} | Tar-1 ${f25(n.aTar1)} | Coğ-1 ${f25(n.aCog1)}` : `<strong>AYT:</strong> Ed ${f25(n.aEd)} | Tar-1 ${f25(n.aTar1)} | Coğ-1 ${f25(n.aCog1)} | Tar-2 ${f25(n.aTar2)} | Coğ-2 ${f25(n.aCog2)} | Fel ${f25(n.aFel)} | Din ${f25(n.aDin)}`;
+        document.getElementById("sonucEkrani").innerHTML = `<h4 style="margin-top:0;">🎯 ${veriler.hedefSiralama.toLocaleString()} Sıralama İçin Mümkün Olan Net Dağılımı</h4><strong>TYT:</strong> Türkçe ${f25(n.tr)} | Mat ${f25(n.mat)} | Sos ${f25(n.sos)} | Fen ${f25(n.fen)}<br><br>${aytGosterim}`;
         document.getElementById("sonucEkrani").style.display = "block";
-        document.getElementById("raporBtn").style.display = "none"; 
-    });
-}
-
-// ==========================================
-// ŞEFFAF RAPOR EKRANI (TAMAMLANDI)
-// ==========================================
-function reklamIzle() {
-    reklamOynat("Premium Strateji Raporunuz Oluşturuluyor... (Sponso
+        document.getEleme
